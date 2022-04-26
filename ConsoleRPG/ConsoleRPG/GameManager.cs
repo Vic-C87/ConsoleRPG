@@ -21,16 +21,22 @@ namespace ConsoleRPG
         int myWindowWidth;
         int myWindowHeight;
 
+        bool myBattleMode = false;
+
         Player myPlayer;
         Door myTownPortal = new Door("", 0, 0, 14);
 
         Vector2 myDrawRoomOffSet = new Vector2(30, 9);
+        Vector2 myPlayerPositionBeforeBattle = new Vector2();
 
         Dictionary<int, Door> myDoorsByID;
         Dictionary<int, Room> myRoomsByID;
 
         Dictionary<DoorDirections, bool> myHaveDoors;
         Dictionary<DoorDirections, bool> myDoorTriggerActivated;
+
+        BattleManager myBattleManager;
+        GameManager myGameManager;
         public GameManager(int aWindowWidth, int aWindowHeight)
         {
             myWindowWidth = aWindowWidth;
@@ -39,14 +45,19 @@ namespace ConsoleRPG
             myRoomsByID = new Dictionary<int, Room>();
             myHaveDoors = new Dictionary<DoorDirections, bool>();
             myDoorTriggerActivated = new Dictionary<DoorDirections, bool>();
+            myBattleManager = new BattleManager();
+            myGameManager = this;
 
             Load();
             EnterRoom(DoorDirections.North);
             
             while(myGameRunning)
             {
-                GetInput(myPlayer.myGameObject);
-                CheckTrigger(myPlayer.myGameObject);
+                if (!myBattleMode)
+                {
+                    GetInput(myPlayer.myGameObject);
+                    CheckTrigger(myPlayer.myGameObject);
+                }
             }
         }
 
@@ -117,6 +128,15 @@ namespace ConsoleRPG
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
             SetHasDoors();
             myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
+        }
+
+        void EnterRoom(Vector2 aPlayerSpawnPosition)
+        {
+            ResetHasDoors();
+            Console.Clear();
+            myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
+            SetHasDoors();
+            myPlayer.myGameObject.DrawSprite(aPlayerSpawnPosition);
         }
 
         void CheckTrigger(GameObject aGameObject) //Refactor!!!!! Calculate from roomsize!
@@ -225,11 +245,9 @@ namespace ConsoleRPG
                 TryEnterDoor();
             }
             else if (input.Key == ConsoleKey.F1)//Debug
-            { 
-                Utilities.CursorPosition(0, 1);
-                Console.WriteLine("-               ");
-                Utilities.CursorPosition(0, 1);
-                Console.WriteLine("Debug");
+            {
+                StartBattle();
+
             }
         }
 
@@ -323,12 +341,20 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-
+            Actor bat = new Actor(Actors.Bat, "Bat", 15, 2, 5000);
+            Actor spider = new Actor(Actors.Spider, "Spider", 15, 2, 7000);
+            List<Actor> testBattleEnemies = new List<Actor>();
+            testBattleEnemies.Add(bat);
+            //testBattleEnemies.Add(spider);
+            myBattleMode = true;
+            myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+            myBattleManager.StartBattle(testBattleEnemies, myPlayer, myGameManager);
         }
 
         public void EndBattle()
         {
-
+            myBattleMode = false;
+            EnterRoom(myPlayerPositionBeforeBattle);
         }
     }
 }

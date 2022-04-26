@@ -18,7 +18,7 @@ namespace ConsoleRPG
             myCurrentRoom = 0;
             myBaseHP = aBaseHP;
             myBaseDamage = 10;
-            myCoolDown = 5000;
+            myCoolDown = 3000;
             myType = Actors.Player;
         }
     }

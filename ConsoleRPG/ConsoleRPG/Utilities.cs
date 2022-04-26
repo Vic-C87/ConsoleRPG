@@ -115,6 +115,16 @@ namespace ConsoleRPG
             Console.SetCursorPosition(anXPosition, aYPosition);
         }
 
+
+        /// <summary>
+        /// Sets cursor at position given by a Vector2 for X and Y
+        /// </summary>
+        /// <param name="aScreenPosition"></param>
+        public static void Cursor(Vector2 aScreenPosition)
+        {
+            Console.SetCursorPosition(aScreenPosition.X, aScreenPosition.Y);
+        }
+
         public static char[,] ReadFromFile(string aMapPath, out string aTitle)
         {
             aTitle = "";
@@ -195,5 +205,12 @@ namespace ConsoleRPG
         Spider,
         Dragon,
         EvilLord
+    }
+
+    enum Actions
+    {
+        Attack,
+        Magic,
+        Defend
     }
 }
