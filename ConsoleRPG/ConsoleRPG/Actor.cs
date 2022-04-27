@@ -14,7 +14,7 @@ namespace ConsoleRPG
 
         public int myHP;
 
-        int myMaxHP;
+        public int myMaxHP;
         
         public int myDamage;
 
@@ -28,11 +28,12 @@ namespace ConsoleRPG
 
         public bool myIsAlive;
 
+        public char[,] mySprite;
 
-        public Actor(Actors aType, string aName, int someHP, int aDamage, int aCoolDown,bool aPlayerToggle = false)
+
+        public Actor(Actors aType, string aSpritePath, int someHP, int aDamage, int aCoolDown,bool aPlayerToggle = false)
         {
             myType = aType;
-            myName = aName;
             myHP = someHP;
             myMaxHP = myHP;
             myDamage = aDamage;
@@ -41,12 +42,13 @@ namespace ConsoleRPG
             myBattleID = 0;
             myLastAttackTime = 0L;
             myIsAlive = true;
+            mySprite = Utilities.ReadFromFile(aSpritePath, out myName);
         }
 
         public Actor(Player aPlayer)
         {
             myType = Actors.Player;
-            myName = "Player";
+            myName = aPlayer.myGameObject.MyTitle;
             myHP = aPlayer.myBaseHP;
             myMaxHP = myHP;
             myDamage = aPlayer.myBaseDamage;
@@ -55,6 +57,7 @@ namespace ConsoleRPG
             myBattleID = 0;
             myLastAttackTime = 0L;
             myIsAlive = true;
+            mySprite = aPlayer.myGameObject.MySprite;
         }
 
         public void BattleAction()
@@ -89,6 +92,28 @@ namespace ConsoleRPG
         void Die()
         {
             myIsAlive = false;
+        }
+
+        public void DrawSprite(Vector2 anOffSet)
+        {
+            for (int y = 0; y < mySprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < mySprite.GetLength(0); x++)
+                {
+                    Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, mySprite[x, y]);
+                }
+            }
+        }
+
+        public void ClearSprite(Vector2 anOffSet)
+        {
+            for (int y = 0; y < mySprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < mySprite.GetLength(0); x++)
+                {
+                    Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, ' ');
+                }
+            }
         }
         
     }

@@ -14,6 +14,11 @@ namespace ConsoleRPG
 		public List<int> myLootableIDs;
 		public char[,] myRoomMap;
 
+		public int myNorthBound;
+		public int mySouthBound;
+		public int myWestBound;
+		public int myEastBound;
+
 		public Room()
 		{
 			myTitle = "";
@@ -26,7 +31,7 @@ namespace ConsoleRPG
 		}
 
 		public Room(string aTitle, string aDescription, int aRoomID, bool aVisited,
-				Dictionary<int, DoorDirections> someDoorIDs, List<int> someLootableIDs, string aRoomPath)
+				Dictionary<int, DoorDirections> someDoorIDs, List<int> someLootableIDs, string aRoomPath, int aNorthBound = 6, int aSouthBound = 22, int aWestBound = 4, int anEastBound = 101)
 		{
 			myTitle = aTitle;
 			myDescription = aDescription;
@@ -35,6 +40,10 @@ namespace ConsoleRPG
 			myDoorIDs = someDoorIDs;
 			myLootableIDs = someLootableIDs;
 			myRoomMap = Utilities.ReadFromFile(aRoomPath, out string mapTitle);
+			myNorthBound = aNorthBound;
+			mySouthBound = aSouthBound;
+			myWestBound = aWestBound;
+			myEastBound = anEastBound;
 		}
 
 		public void DrawRoom(Vector2 anOffSet)

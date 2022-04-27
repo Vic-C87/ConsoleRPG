@@ -188,6 +188,12 @@ namespace ConsoleRPG
             return map;
         }
 
+        public static void PressEnterToContinue()
+        {
+            Console.Write("Press \'Enter\' to continue");
+            Console.ReadLine();
+        }
+
     }
 
     enum DoorDirections

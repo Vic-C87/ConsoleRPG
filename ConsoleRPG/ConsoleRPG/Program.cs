@@ -16,7 +16,7 @@ namespace ConsoleRPG
             Console.CursorVisible = false;
             Console.SetCursorPosition(0, 0);
 
-            GameManager game = new GameManager(WINDOW_WIDTH, WINDOW_HEIGHT);                      
+            GameManager game = new GameManager();                      
         }       
     }    
 }

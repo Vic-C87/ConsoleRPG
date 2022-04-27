@@ -8,18 +8,9 @@ namespace ConsoleRPG
 {
     internal class GameManager
     {
-        const char BLANK = ' ';
-
         const int myPlayerBaseHP = 50;
 
-
-        char[,] myGameArray;
-        char[,] myOverlayArray;
-
         bool myGameRunning = true;
-
-        int myWindowWidth;
-        int myWindowHeight;
 
         bool myBattleMode = false;
 
@@ -37,10 +28,8 @@ namespace ConsoleRPG
 
         BattleManager myBattleManager;
         GameManager myGameManager;
-        public GameManager(int aWindowWidth, int aWindowHeight)
+        public GameManager()
         {
-            myWindowWidth = aWindowWidth;
-            myWindowHeight = aWindowHeight;
             myDoorsByID = new Dictionary<int, Door>();
             myRoomsByID = new Dictionary<int, Room>();
             myHaveDoors = new Dictionary<DoorDirections, bool>();
@@ -123,6 +112,10 @@ namespace ConsoleRPG
 
         void EnterRoom(DoorDirections anEntryPoint)
         {
+            if (myPlayer.myCurrentRoom == 0)
+            {
+                anEntryPoint = DoorDirections.North;
+            }
             ResetHasDoors();
             Console.Clear();
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
@@ -143,37 +136,55 @@ namespace ConsoleRPG
         {
             int xPosition = aGameObject.MyPosition.X;
             int yPosition = aGameObject.MyPosition.Y;
-
-            //Check west door trigger
-            if (myHaveDoors[DoorDirections.West] && xPosition == 35 && (yPosition == 16 || yPosition == 17 || yPosition == 18))
+            if (myPlayer.myCurrentRoom == 0)
             {
-                myDoorTriggerActivated[DoorDirections.West] = true;
-                Utilities.CursorPosition();
-                Console.WriteLine("Press \'Enter\' to use door");
-            }//Check north door trigger
-            else if (myHaveDoors[DoorDirections.North] && yPosition == 16 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
-            {
-                myDoorTriggerActivated[DoorDirections.North] = true;
-                Utilities.CursorPosition();
-                Console.WriteLine("Press \'Enter\' to use door");
-            }//Check east door trigger
-            else if (myHaveDoors[DoorDirections.East] && xPosition == 127 && (yPosition == 16 || yPosition == 17 || yPosition == 18))
-            {
-                myDoorTriggerActivated[DoorDirections.East] = true;
-                Utilities.CursorPosition();
-                Console.WriteLine("Press \'Enter\' to use door");
-            }//Check south door trigger
-            else if (myHaveDoors[DoorDirections.South] && yPosition == 26 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
-            {
-                myDoorTriggerActivated[DoorDirections.South] = true;
-                Utilities.CursorPosition();
-                Console.WriteLine("Press \'Enter\' to use door");
+                if (xPosition == 127 && (yPosition == 23 || yPosition == 24 || yPosition == 25 || yPosition == 26))
+                {
+                    myDoorTriggerActivated[DoorDirections.East] = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use door");
+                }
+                else //Reset trigger
+                {
+                    ResetDoorTriggers();
+                    Utilities.CursorPosition();
+                    Console.WriteLine("                           ");
+                }
             }
-            else //Reset trigger
+            else
             {
-                ResetDoorTriggers();
-                Utilities.CursorPosition();
-                Console.WriteLine("                           ");
+                //Check west door trigger
+                if (myHaveDoors[DoorDirections.West] && xPosition == 35 && (yPosition == 16 || yPosition == 17 || yPosition == 18))
+                {
+                    myDoorTriggerActivated[DoorDirections.West] = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use door");
+                }//Check north door trigger
+                else if (myHaveDoors[DoorDirections.North] && yPosition == 16 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
+                {
+                    myDoorTriggerActivated[DoorDirections.North] = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use door");
+                }//Check east door trigger
+                else if (myHaveDoors[DoorDirections.East] && xPosition == 127 && (yPosition == 16 || yPosition == 17 || yPosition == 18))
+                {
+                    myDoorTriggerActivated[DoorDirections.East] = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use door");
+                }//Check south door trigger
+                else if (myHaveDoors[DoorDirections.South] && yPosition == 26 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
+                {
+                    myDoorTriggerActivated[DoorDirections.South] = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use door");
+                }
+                else //Reset trigger
+                {
+                    ResetDoorTriggers();
+                    Utilities.CursorPosition();
+                    Console.WriteLine("                           ");
+                }
+
             }
         }
 
@@ -222,22 +233,22 @@ namespace ConsoleRPG
             }
             else if (input.Key == ConsoleKey.UpArrow)
             {
-                if (aGameObject.MyPosition.Up().Y > 15)
+                if (aGameObject.MyPosition.Up().Y > myRoomsByID[myPlayer.myCurrentRoom].myNorthBound + myDrawRoomOffSet.Y)
                     aGameObject.Move(aGameObject.MyPosition.Up());
             }
             else if (input.Key == ConsoleKey.RightArrow)
             {
-                if (aGameObject.MyPosition.Right().X < 131 - aGameObject.MyWidth)
+                if (aGameObject.MyPosition.Right().X < myRoomsByID[myPlayer.myCurrentRoom].myEastBound + myDrawRoomOffSet.X - aGameObject.MyWidth)
                     aGameObject.Move(aGameObject.MyPosition.Right());
             }
             else if (input.Key == ConsoleKey.DownArrow)
             {
-                if (aGameObject.MyPosition.Down().Y < 31 - aGameObject.MyHeight)
+                if (aGameObject.MyPosition.Down().Y < myRoomsByID[myPlayer.myCurrentRoom].mySouthBound + myDrawRoomOffSet.Y - aGameObject.MyHeight)
                     aGameObject.Move(aGameObject.MyPosition.Down());
             }
             else if (input.Key == ConsoleKey.LeftArrow)
             {
-                if (aGameObject.MyPosition.Left().X > 34)
+                if (aGameObject.MyPosition.Left().X > myRoomsByID[myPlayer.myCurrentRoom].myWestBound + myDrawRoomOffSet.X)
                     aGameObject.Move(aGameObject.MyPosition.Left());
             }
             else if (input.Key == ConsoleKey.Enter)
@@ -269,64 +280,6 @@ namespace ConsoleRPG
         }
 
         /// <summary>
-        /// Initiate 2D-Array and fill it with blank spaces as deafault
-        /// </summary>
-        /// <param name="aWidth"></param>
-        /// <param name="aHeight"></param>
-        /// <param name="aSymbol"></param>
-        /// <returns></returns>
-        char[,] SetArray(int aWidth, int aHeight, char aSymbol = BLANK)
-        {
-            char[,] anArray = new char[aWidth, aHeight];
-
-            for (int y = 0; y < aHeight; y++)
-            {
-                for (int x = 0; x < aWidth; x++)
-                {
-                    anArray[x, y] = aSymbol;
-                }
-            }
-            return anArray;
-        }
-
-        /// <summary>
-        /// Initiate overlay 2D-Array for forexampel menues
-        /// </summary>
-        /// <param name="anOverlayArray"></param>
-        /// <param name="anXOffSet"></param>
-        /// <param name="aYOffSet"></param>
-        void SetOverlay(char[,] anOverlayArray, int anXOffSet, int aYOffSet)
-        {
-            myOverlayArray = new char[myWindowWidth, myWindowHeight];
-            Array.Copy(myGameArray, myOverlayArray, myGameArray.Length);
-
-            for (int y = 0; y < anOverlayArray.GetLength(1); y++)
-            {
-                for (int x = 0; x < anOverlayArray.GetLength(0); x++)
-                {
-                    myOverlayArray[x + anXOffSet, y + aYOffSet] = anOverlayArray[x, y];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Draws a 2D-array to screen, starting at top left(0,0)
-        /// </summary>
-        /// <param name="anArray"></param>
-        void DrawScreen(char[,] anArray)
-        {
-            Utilities.CursorPosition();
-            for (int y = 0; y < anArray.GetLength(1); y++)
-            {
-                for (int x = 0; x < anArray.GetLength(0); x++)
-                {
-                    Utilities.Draw(x, y, anArray[x, y]);
-                }
-                Console.WriteLine("");
-            }
-        }
-
-        /// <summary>
         /// Reads in a path of ASCII-art from txt-file and returns a GameObject with the ASCII as its Sprite
         /// </summary>
         /// <param name="aFilePath"></param>
@@ -341,11 +294,11 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-            Actor bat = new Actor(Actors.Bat, "Bat", 15, 2, 5000);
-            Actor spider = new Actor(Actors.Spider, "Spider", 15, 2, 7000);
+            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 15, 2, 5000);
+            //Actor dragon = new Actor(Actors.Dragon, @"Sprites\Dragon.txt", 15, 2, 7000);
             List<Actor> testBattleEnemies = new List<Actor>();
             testBattleEnemies.Add(bat);
-            //testBattleEnemies.Add(spider);
+            //testBattleEnemies.Add(dragon);
             myBattleMode = true;
             myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
             myBattleManager.StartBattle(testBattleEnemies, myPlayer, myGameManager);
