@@ -5,6 +5,7 @@ namespace ConsoleRPG
     {
         public int myCurrentRoom;
         public int myBaseHP;
+        public int myCurrentHP;
         public int myBaseDamage;
         public int myCoolDown;
 
@@ -12,14 +13,18 @@ namespace ConsoleRPG
 
         public GameObject myGameObject { get; }
 
+        public Spellbook mySpellbook;
+
         public Player(GameObject aGameObject, int aBaseHP)
         {
             myGameObject = aGameObject;
             myCurrentRoom = 0;
             myBaseHP = aBaseHP;
+            myCurrentHP = myBaseHP;
             myBaseDamage = 3;
             myCoolDown = 3000;
             myType = Actors.Player;
+            mySpellbook = new Spellbook();
         }
     }
 }

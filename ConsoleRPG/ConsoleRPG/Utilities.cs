@@ -219,4 +219,11 @@ namespace ConsoleRPG
         Magic,
         Defend
     }
+
+    enum SpellType
+    {
+        LightningBolt,
+        Fireball,
+        Iceblast
+    }
 }

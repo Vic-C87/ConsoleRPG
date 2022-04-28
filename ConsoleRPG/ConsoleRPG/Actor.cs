@@ -30,6 +30,8 @@ namespace ConsoleRPG
 
         public char[,] mySprite;
 
+        public Spellbook mySpellbook;
+
 
         public Actor(Actors aType, string aSpritePath, int someHP, int aDamage, int aCoolDown,bool aPlayerToggle = false)
         {
@@ -43,14 +45,15 @@ namespace ConsoleRPG
             myLastAttackTime = 0L;
             myIsAlive = true;
             mySprite = Utilities.ReadFromFile(aSpritePath, out myName);
+            mySpellbook = new Spellbook();
         }
 
         public Actor(Player aPlayer)
         {
             myType = Actors.Player;
             myName = aPlayer.myGameObject.MyTitle;
-            myHP = aPlayer.myBaseHP;
-            myMaxHP = myHP;
+            myHP = aPlayer.myCurrentHP;
+            myMaxHP = aPlayer.myBaseHP;
             myDamage = aPlayer.myBaseDamage;
             myIsPlayer = true;
             myCoolDown = aPlayer.myCoolDown;
@@ -58,6 +61,7 @@ namespace ConsoleRPG
             myLastAttackTime = 0L;
             myIsAlive = true;
             mySprite = aPlayer.myGameObject.MySprite;
+            mySpellbook = aPlayer.mySpellbook;
         }
 
         public void BattleAction()

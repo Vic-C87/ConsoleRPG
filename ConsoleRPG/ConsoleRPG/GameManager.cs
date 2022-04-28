@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Media;
+
 
 namespace ConsoleRPG
 {
@@ -13,6 +15,10 @@ namespace ConsoleRPG
         bool myGameRunning = true;
 
         bool myBattleMode = false;
+
+        bool myMansionAmbiencePlaying = false;
+        SoundPlayer myMansionAmbiencePlayer;
+        SoundPlayer myVillageAmbiencePlayer;
 
         Player myPlayer;
         Door myTownPortal = new Door("", 0, 0, 14);
@@ -28,6 +34,7 @@ namespace ConsoleRPG
 
         BattleManager myBattleManager;
         GameManager myGameManager;
+        SpellFactory mySpellFactory;
         public GameManager()
         {
             myDoorsByID = new Dictionary<int, Door>();
@@ -36,6 +43,7 @@ namespace ConsoleRPG
             myDoorTriggerActivated = new Dictionary<DoorDirections, bool>();
             myBattleManager = new BattleManager();
             myGameManager = this;
+            mySpellFactory = new SpellFactory();
 
             Load();
             EnterRoom(DoorDirections.North);
@@ -61,6 +69,7 @@ namespace ConsoleRPG
             myDoorsByID = doorFactory.GetDoors();
             
             myPlayer = new Player(ReadSpriteFromFile(@"Sprites\Man.txt"), myPlayerBaseHP);
+            myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.LightningBolt));
 
             myHaveDoors.Add(DoorDirections.West, false);
             myHaveDoors.Add(DoorDirections.North, false);
@@ -71,6 +80,12 @@ namespace ConsoleRPG
             myDoorTriggerActivated.Add(DoorDirections.North, false);
             myDoorTriggerActivated.Add(DoorDirections.East, false);
             myDoorTriggerActivated.Add(DoorDirections.South, false);
+
+            if (OperatingSystem.IsWindows())
+            {
+                myMansionAmbiencePlayer = new SoundPlayer(@"Audio\mansionAmbience.wav");
+                myVillageAmbiencePlayer = new SoundPlayer(@"Audio\villageAmbience.wav");
+            }
         }
 
         void ResetHasDoors()
@@ -112,8 +127,19 @@ namespace ConsoleRPG
 
         void EnterRoom(DoorDirections anEntryPoint)
         {
+            if (!myMansionAmbiencePlaying && OperatingSystem.IsWindows())
+            {
+                myMansionAmbiencePlayer.PlayLooping();
+                myMansionAmbiencePlaying = true;
+            }
             if (myPlayer.myCurrentRoom == 0)
             {
+                if (OperatingSystem.IsWindows())
+                {
+                    myVillageAmbiencePlayer.PlayLooping();
+                    myMansionAmbiencePlaying = false;
+                }
+                
                 anEntryPoint = DoorDirections.North;
             }
             ResetHasDoors();
@@ -125,6 +151,11 @@ namespace ConsoleRPG
 
         void EnterRoom(Vector2 aPlayerSpawnPosition)
         {
+            if (!myMansionAmbiencePlaying && OperatingSystem.IsWindows())
+            {
+                myMansionAmbiencePlayer.PlayLooping();
+                myMansionAmbiencePlaying = true;
+            }
             ResetHasDoors();
             Console.Clear();
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
@@ -301,6 +332,7 @@ namespace ConsoleRPG
             //testBattleEnemies.Add(dragon);
             myBattleMode = true;
             myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+            myMansionAmbiencePlaying = false;
             myBattleManager.StartBattle(testBattleEnemies, myPlayer, myGameManager);
         }
 
