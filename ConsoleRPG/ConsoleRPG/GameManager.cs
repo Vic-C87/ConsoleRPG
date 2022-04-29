@@ -17,11 +17,17 @@ namespace ConsoleRPG
         bool myBattleMode = false;
 
         bool myMansionAmbiencePlaying = false;
+
+        bool myPortalPlaced = false;
+        bool myPortalTrigger = false;
+        bool myRoomPortalTrigger = false;
         SoundPlayer myMansionAmbiencePlayer;
         SoundPlayer myVillageAmbiencePlayer;
 
         Player myPlayer;
-        Door myTownPortal = new Door("", 0, 0, 14);
+        TownPortal myPortal;
+        //Door myTownPortal = new Door("", 0, 0, 14);
+
 
         Vector2 myDrawRoomOffSet = new Vector2(30, 9);
         Vector2 myPlayerPositionBeforeBattle = new Vector2();
@@ -44,6 +50,7 @@ namespace ConsoleRPG
             myBattleManager = new BattleManager();
             myGameManager = this;
             mySpellFactory = new SpellFactory();
+            myPortal = new TownPortal();
 
             Load();
             EnterRoom(DoorDirections.North);
@@ -147,6 +154,16 @@ namespace ConsoleRPG
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
             SetHasDoors();
             myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
+            if (myPortalPlaced && myPlayer.myCurrentRoom == 0)
+            {
+                //DrawPortalInTown
+
+                myPortal.DrawPortalInTown();
+            }
+            if (myPortal.myOriginRoomID == myPlayer.myCurrentRoom && myPortal.myIsPlaced)
+            {
+                myPortal.PlacePortal(myPlayer.myCurrentRoom);
+            }
         }
 
         void EnterRoom(Vector2 aPlayerSpawnPosition)
@@ -175,9 +192,16 @@ namespace ConsoleRPG
                     Utilities.CursorPosition();
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
+                else if (myPortalPlaced && yPosition == 21 && (xPosition == 32 || xPosition == 33 || xPosition == 34 || xPosition == 35))
+                {
+                    myPortalTrigger = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use portal");
+                }
                 else //Reset trigger
                 {
                     ResetDoorTriggers();
+                    myPortalTrigger = false;
                     Utilities.CursorPosition();
                     Console.WriteLine("                           ");
                 }
@@ -209,9 +233,16 @@ namespace ConsoleRPG
                     Utilities.CursorPosition();
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
+                else if (myPortalPlaced && yPosition == 16 && (xPosition == 108 || xPosition == 109 || xPosition == 110 || xPosition == 111))
+                {
+                    myRoomPortalTrigger = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to use portal");
+                }
                 else //Reset trigger
                 {
                     ResetDoorTriggers();
+                    myRoomPortalTrigger = false;
                     Utilities.CursorPosition();
                     Console.WriteLine("                           ");
                 }
@@ -228,7 +259,21 @@ namespace ConsoleRPG
             {
                 myPlayer.myCurrentRoom = myDoorsByID[doorID].UseDoor(myPlayer.myCurrentRoom);
                 EnterRoom(doorToEnter);
-            }           
+            } 
+            if (myPortalTrigger)
+            {
+                myPlayer.myCurrentRoom = myPortal.myOriginRoomID;
+                myPortalPlaced = false;
+                myPortal.myIsPlaced = false;
+                myPortalTrigger = false;
+                EnterRoom(DoorDirections.North);
+            }
+            if (myRoomPortalTrigger)
+            {
+                myPlayer.myCurrentRoom = 0;
+                myRoomPortalTrigger = false;
+                EnterRoom(DoorDirections.North);
+            }
         }
 
         bool GetTriggeredDoor(out int aDoorID, out DoorDirections aDoorDirection)
@@ -291,6 +336,11 @@ namespace ConsoleRPG
                 StartBattle();
 
             }
+            else if (input.Key == ConsoleKey.F2)//Change key?
+            {
+                myPortal.PlacePortal(myPlayer.myCurrentRoom);
+                myPortalPlaced = true;
+            }
         }
 
         Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)  //Refactor! Calculate from roomsize!
@@ -325,10 +375,10 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 15, 2, 5000);
+            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 15, 2, 5000);//DEbug
             //Actor dragon = new Actor(Actors.Dragon, @"Sprites\Dragon.txt", 15, 2, 7000);
-            List<Actor> testBattleEnemies = new List<Actor>();
-            testBattleEnemies.Add(bat);
+            List<Actor> testBattleEnemies = new List<Actor>();//Debug
+            testBattleEnemies.Add(bat); //Debug
             //testBattleEnemies.Add(dragon);
             myBattleMode = true;
             myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;

@@ -20,14 +20,16 @@ namespace ConsoleRPG
 					new Dictionary<int, DoorDirections>() { { 0, DoorDirections.East } },
 					new List<int>(),
 					rootRoomPath + "Village.txt",
+					false,
 					11, 25, 0);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 			//second
-			newRoom = new Room("Courtyard", "a wide courtyard",
+			newRoom = new Room("Foyer", "the first room of the mansion",
 					1, false,
 					new Dictionary<int, DoorDirections>() { { 0, DoorDirections.West }, { 1, DoorDirections.North } },
 					new List<int>(),
-					rootRoomPath + "Room_W-N.txt");
+					rootRoomPath + "Foyer.txt",
+					true);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Greathall", "a large hall with high ceilling",

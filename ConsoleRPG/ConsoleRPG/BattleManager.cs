@@ -91,7 +91,7 @@ namespace ConsoleRPG
                 Act();
             }
             Utilities.CursorPosition(85, 22);
-            Console.Write("Victory!");
+            Console.Write("Victory! ");
             PlaySound(myBattleVictoryPlayer);
             Utilities.PressEnterToContinue();
             myStopWatch.Reset();
@@ -311,7 +311,6 @@ namespace ConsoleRPG
                 }
                 if(myTurnListByBattleID[0] == 0)
                 {
-                    //myPlayer.BattleAction();
                     mySelectAction = true;
                     SelectAction();
                     myPlayer.myLastAttackTime = myStopWatch.ElapsedMilliseconds;
