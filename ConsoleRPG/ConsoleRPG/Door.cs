@@ -12,10 +12,8 @@ namespace ConsoleRPG
 		public int myRoomOneID;
 		public int myRoomTwoID;
 		public int myDoorID;
-		public int myLockDifficulty;
 		public bool myLocked;
-		public bool myPickable;
-		public bool myBreakable;
+		public int myKeyID;
 
 		public Door()
 		{
@@ -23,31 +21,30 @@ namespace ConsoleRPG
 			myRoomOneID = 0;
 			myRoomTwoID = 0;
 			myDoorID = 0;
-			myLockDifficulty = 0;
 			myLocked = false;
-			myPickable = false;
-			myBreakable = false;
+			myKeyID = 0;
+
 		}
 
-		public Door(string aDoorDescription, int aRoomOneID, int aRoomTwoID, int aDoorID, int aLockDifficulty = 0, bool isLocked = false, bool isPickable = false, bool isBreakable = false)
+		public Door(string aDoorDescription, int aRoomOneID, int aRoomTwoID, int aDoorID, bool isLocked = false, int aKeyID = 0)
 		{
 			myDoorDescription = aDoorDescription;
 			myRoomOneID = aRoomOneID;
 			myRoomTwoID = aRoomTwoID;
-			myDoorID = aDoorID;
-			myLockDifficulty = aLockDifficulty;
+			myDoorID = aDoorID;			
 			myLocked = isLocked;
-			myPickable = isPickable;
-			myBreakable = isBreakable;
+			myKeyID = aKeyID;
 
 		}
 
-		public int UseDoor(int aCurrentRoomID, int aDexterity = 0)
+		public int UseDoor(int aCurrentRoomID, out bool unlocked, int aKeyID = 0)
 		{
 			if (myLocked)
 			{
-				if (Unlock(myLockDifficulty +1)) //Add unlock check
+				if (Unlock(aKeyID)) //Add unlock check
 				{
+					myLocked = false;
+					unlocked = true;
 					if (aCurrentRoomID == myRoomOneID)
 					{
 						return myRoomTwoID;
@@ -59,11 +56,13 @@ namespace ConsoleRPG
 				}
 				else
 				{
+					unlocked = false;
 					return aCurrentRoomID;
 				}
 			}
 			else
 			{
+				unlocked = true;
 				if (aCurrentRoomID == myRoomOneID)
 				{
 					return myRoomTwoID;
@@ -76,9 +75,9 @@ namespace ConsoleRPG
 		}
 
 
-		public bool Unlock(int aDifficultyCheck)
+		public bool Unlock(int aKeyID)
 		{
-			if (aDifficultyCheck > myLockDifficulty)
+			if (aKeyID == myKeyID)
 			{
 				myLocked = false;
 				return true;

@@ -21,13 +21,13 @@ namespace ConsoleRPG
         bool myPortalPlaced = false;
         bool myPortalTrigger = false;
         bool myRoomPortalTrigger = false;
+
+        bool myChestTrigger = false;
         SoundPlayer myMansionAmbiencePlayer;
         SoundPlayer myVillageAmbiencePlayer;
 
         Player myPlayer;
         TownPortal myPortal;
-        //Door myTownPortal = new Door("", 0, 0, 14);
-
 
         Vector2 myDrawRoomOffSet = new Vector2(30, 9);
         Vector2 myPlayerPositionBeforeBattle = new Vector2();
@@ -41,6 +41,9 @@ namespace ConsoleRPG
         BattleManager myBattleManager;
         GameManager myGameManager;
         SpellFactory mySpellFactory;
+
+        char[,] myDoorLockSprite;
+
         public GameManager()
         {
             myDoorsByID = new Dictionary<int, Door>();
@@ -93,6 +96,8 @@ namespace ConsoleRPG
                 myMansionAmbiencePlayer = new SoundPlayer(@"Audio\mansionAmbience.wav");
                 myVillageAmbiencePlayer = new SoundPlayer(@"Audio\villageAmbience.wav");
             }
+
+            myDoorLockSprite = Utilities.ReadFromFile(@"Sprites\Lock.txt", out string lockName);
         }
 
         void ResetHasDoors()
@@ -152,17 +157,58 @@ namespace ConsoleRPG
             ResetHasDoors();
             Console.Clear();
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
+            List<DoorDirections> doors = new List<DoorDirections>();
+            if (CheckIfLockedDoors(out doors))
+            {
+                foreach (DoorDirections door in doors)
+                {
+                    switch (door)
+                    {
+                        case DoorDirections.West:
+                            Utilities.CursorPosition(29, 16);
+                            Console.Write("    ");
+                            Utilities.CursorPosition(29, 17);
+                            Console.Write("    ");
+                            DrawLock(29, 18);
+                            break;
+                        case DoorDirections.North:
+                            DrawLock(80, 12);
+                            break;
+                        case DoorDirections.East:
+                            Utilities.CursorPosition(131, 16);
+                            Console.Write("    ");
+                            Utilities.CursorPosition(131, 17);
+                            Console.Write("    ");
+                            DrawLock(131, 18);
+                            break;
+                        case DoorDirections.South:
+                            DrawLock(79, 31);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
             SetHasDoors();
             myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
             if (myPortalPlaced && myPlayer.myCurrentRoom == 0)
             {
-                //DrawPortalInTown
-
                 myPortal.DrawPortalInTown();
             }
             if (myPortal.myOriginRoomID == myPlayer.myCurrentRoom && myPortal.myIsPlaced)
             {
                 myPortal.PlacePortal(myPlayer.myCurrentRoom);
+            }
+        }
+
+        void DrawLock(int anXOffSet, int aYOffSet)
+        {
+            for (int y = 0; y < myDoorLockSprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < myDoorLockSprite.GetLength(0); x++)
+                {
+                    Utilities.Draw(x + anXOffSet, y + aYOffSet, myDoorLockSprite[x, y]);
+                }
             }
         }
 
@@ -192,7 +238,7 @@ namespace ConsoleRPG
                     Utilities.CursorPosition();
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
-                else if (myPortalPlaced && yPosition == 21 && (xPosition == 32 || xPosition == 33 || xPosition == 34 || xPosition == 35))
+                else if (myPortalPlaced && yPosition == 20 && (xPosition == 32 || xPosition == 33 || xPosition == 34 || xPosition == 35))
                 {
                     myPortalTrigger = true;
                     Utilities.CursorPosition();
@@ -239,15 +285,48 @@ namespace ConsoleRPG
                     Utilities.CursorPosition();
                     Console.WriteLine("Press \'Enter\' to use portal");
                 }
+                else if (CanOpenChest() && yPosition == 16 &&(xPosition == 93 || xPosition == 94 || xPosition == 95 || xPosition == 96))
+                {
+                    myChestTrigger = true;
+                    Utilities.CursorPosition();
+                    Console.WriteLine("Press \'Enter\' to open chest");
+                }
                 else //Reset trigger
                 {
                     ResetDoorTriggers();
                     myRoomPortalTrigger = false;
+                    myChestTrigger = false;
                     Utilities.CursorPosition();
                     Console.WriteLine("                           ");
+                    Console.Write("                                               ");
                 }
 
             }
+        }
+
+        bool CanOpenChest()
+        {
+            bool canOpen = false;
+            if (myRoomsByID[myPlayer.myCurrentRoom].myHaveChest && !myRoomsByID[myPlayer.myCurrentRoom].myChest.myIsOpened)
+            {
+                canOpen = true;
+            }
+
+            return canOpen;
+        }
+
+        int GetKeyForDoor(int aDoorID)
+        {
+            int keyNeeded = myDoorsByID[aDoorID].myKeyID;
+
+            for (int i = 0; i < myPlayer.myKeyIDs.Count; i++)
+            {
+                if (keyNeeded == myPlayer.myKeyIDs[i])
+                {
+                    return myPlayer.myKeyIDs[i];
+                }
+            }
+            return 0;
         }
 
         void TryEnterDoor()
@@ -257,8 +336,18 @@ namespace ConsoleRPG
 
             if (GetTriggeredDoor(out doorID, out doorToEnter))
             {
-                myPlayer.myCurrentRoom = myDoorsByID[doorID].UseDoor(myPlayer.myCurrentRoom);
-                EnterRoom(doorToEnter);
+                bool doorOpened;
+                int keyToUse = GetKeyForDoor(doorID);
+                myPlayer.myCurrentRoom = myDoorsByID[doorID].UseDoor(myPlayer.myCurrentRoom, out doorOpened, keyToUse);
+                if (doorOpened)
+                {
+                    EnterRoom(doorToEnter);
+                }
+                else
+                {
+                    Utilities.CursorPosition(0, 1);
+                    Console.Write("Door is LOCKED. You need to find the right KEY.");
+                }
             } 
             if (myPortalTrigger)
             {
@@ -273,6 +362,15 @@ namespace ConsoleRPG
                 myPlayer.myCurrentRoom = 0;
                 myRoomPortalTrigger = false;
                 EnterRoom(DoorDirections.North);
+            }
+            if (myChestTrigger)
+            {
+                List<Item> items = new List<Item>();
+                items = myRoomsByID[myPlayer.myCurrentRoom].myChest.OpenChest();
+                if(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
+                {
+                    myPlayer.myKeyIDs.Add(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID);
+                }
             }
         }
 
@@ -290,6 +388,22 @@ namespace ConsoleRPG
                 }
             }
             return false;
+        }
+
+        bool CheckIfLockedDoors(out List<DoorDirections> someLockedDoorDirections)
+        {
+            bool haveLockedDoors = false;
+            List<DoorDirections> doorDirections = new List<DoorDirections>();
+            foreach (KeyValuePair<int, DoorDirections> door in myRoomsByID[myPlayer.myCurrentRoom].myDoorIDs)
+            {
+                if (myDoorsByID[door.Key].myLocked)
+                {
+                    haveLockedDoors = true;
+                    doorDirections.Add(door.Value);
+                }
+            }
+            someLockedDoorDirections = doorDirections;
+            return haveLockedDoors;
         }
 
         /// <summary>
@@ -331,15 +445,14 @@ namespace ConsoleRPG
             {
                 TryEnterDoor();
             }
-            else if (input.Key == ConsoleKey.F1)//Debug
-            {
-                StartBattle();
-
-            }
-            else if (input.Key == ConsoleKey.F2)//Change key?
+            else if (input.Key == ConsoleKey.F1 && myPlayer.myCurrentRoom != 0)//Change key?
             {
                 myPortal.PlacePortal(myPlayer.myCurrentRoom);
                 myPortalPlaced = true;
+            }
+            else if (input.Key == ConsoleKey.F2)//Debug
+            {
+                StartBattle();
             }
         }
 

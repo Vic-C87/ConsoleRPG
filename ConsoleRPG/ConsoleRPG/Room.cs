@@ -60,6 +60,11 @@ namespace ConsoleRPG
             }
 		}
 
+		public void AddKeyToChest(int aKeyID)
+        {
+			myChest.AddKey(aKeyID);
+        }
+
 		public void DrawRoom(Vector2 anOffSet)
         {
 			for (int y = 0; y < myRoomMap.GetLength(1); y++)

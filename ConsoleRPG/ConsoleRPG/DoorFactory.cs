@@ -46,7 +46,9 @@ namespace ConsoleRPG
 
 			newDoor = new Door("",
 					5, 6,
-					5);
+					5,
+					true,
+					1);
 			myDoors.Add(newDoor.myDoorID, newDoor);
 
 			newDoor = new Door("",
@@ -57,7 +59,9 @@ namespace ConsoleRPG
 
 			newDoor = new Door("",
 					2, 8,
-					7);
+					7,
+					true,
+					2);
 			myDoors.Add(newDoor.myDoorID, newDoor);
 
 			newDoor = new Door("",
@@ -79,12 +83,16 @@ namespace ConsoleRPG
 
 			newDoor = new Door("",
 					8, 12,
-					11);
+					11,
+					true,
+					3);
 			myDoors.Add(newDoor.myDoorID, newDoor);
 
 			newDoor = new Door("",
 					4, 13,
-					12);
+					12,
+					true,
+					4);
 			myDoors.Add(newDoor.myDoorID, newDoor);
 
 

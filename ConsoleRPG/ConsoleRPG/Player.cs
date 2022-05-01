@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace ConsoleRPG
 {
     internal class Player
@@ -15,6 +17,8 @@ namespace ConsoleRPG
 
         public Spellbook mySpellbook;
 
+        public List<int> myKeyIDs;
+
         public Player(GameObject aGameObject, int aBaseHP)
         {
             myGameObject = aGameObject;
@@ -25,6 +29,7 @@ namespace ConsoleRPG
             myCoolDown = 3000;
             myType = Actors.Player;
             mySpellbook = new Spellbook();
+            myKeyIDs = new List<int>();
         }
     }
 }
