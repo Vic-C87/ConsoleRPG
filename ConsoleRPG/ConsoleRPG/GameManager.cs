@@ -488,11 +488,13 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 15, 2, 5000);//DEbug
-            //Actor dragon = new Actor(Actors.Dragon, @"Sprites\Dragon.txt", 15, 2, 7000);
+            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 3, 2, 5000);//DEbug
+            Actor dragon = new Actor(Actors.Dragon, @"Sprites\Dragon.txt", 3, 2, 7000);
+            Actor bat2 = new Actor(Actors.Bat, @"Sprites\Bat.txt", 3, 2, 5000);
             List<Actor> testBattleEnemies = new List<Actor>();//Debug
             testBattleEnemies.Add(bat); //Debug
-            //testBattleEnemies.Add(dragon);
+            testBattleEnemies.Add(dragon);
+            testBattleEnemies.Add(bat2);
             myBattleMode = true;
             myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
             myMansionAmbiencePlaying = false;

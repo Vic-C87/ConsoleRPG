@@ -226,4 +226,12 @@ namespace ConsoleRPG
         Fireball,
         Iceblast
     }
+
+    enum FrameType
+    {
+        Frame,
+        ActionFrame,
+        SpellFrame,
+        EnemyNameFrame
+    }
 }

@@ -36,7 +36,7 @@ namespace ConsoleRPG
 					2, false,
 					new Dictionary<int, DoorDirections>() { { 1, DoorDirections.South }, { 2, DoorDirections.North }, { 3, DoorDirections.West }, { 7, DoorDirections.East } },
 					new List<int>(),
-					rootRoomPath + "Room_W-N-E-S.txt");
+					rootRoomPath + "GreatHall.txt");
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Cloakroom", "a small cloakroom",

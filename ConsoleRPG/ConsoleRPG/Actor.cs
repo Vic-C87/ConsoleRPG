@@ -32,6 +32,10 @@ namespace ConsoleRPG
 
         public Spellbook mySpellbook;
 
+        public Vector2 myBattlePosition;
+
+        public Vector2 myBattleNameOnScreenPosition;
+
 
         public Actor(Actors aType, string aSpritePath, int someHP, int aDamage, int aCoolDown,bool aPlayerToggle = false)
         {
@@ -46,6 +50,8 @@ namespace ConsoleRPG
             myIsAlive = true;
             mySprite = Utilities.ReadFromFile(aSpritePath, out myName);
             mySpellbook = new Spellbook();
+            myBattlePosition = new Vector2();
+            myBattleNameOnScreenPosition = new Vector2();
         }
 
         public Actor(Player aPlayer)
@@ -62,6 +68,8 @@ namespace ConsoleRPG
             myIsAlive = true;
             mySprite = aPlayer.myGameObject.MySprite;
             mySpellbook = aPlayer.mySpellbook;
+            myBattlePosition = new Vector2();
+            myBattleNameOnScreenPosition = new Vector2();
         }
 
         public void BattleAction()
@@ -93,9 +101,14 @@ namespace ConsoleRPG
             }
         }
 
-        void Die()
+        public void Die()
         {
             myIsAlive = false;
+            ClearSprite(myBattlePosition);
+            Utilities.Cursor(myBattleNameOnScreenPosition);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write(myName);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public void DrawSprite(Vector2 anOffSet)
@@ -107,6 +120,7 @@ namespace ConsoleRPG
                     Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, mySprite[x, y]);
                 }
             }
+            myBattlePosition = anOffSet;
         }
 
         public void ClearSprite(Vector2 anOffSet)
