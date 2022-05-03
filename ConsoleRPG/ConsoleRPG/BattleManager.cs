@@ -31,7 +31,6 @@ namespace ConsoleRPG
 
         int myPlayerCoolDownCounter;
 
-        Vector2 myEnemySpritePosition = new Vector2(80, 5);
         Vector2[] myEnemySpritePositions = new Vector2[3] { new Vector2(50, 5), new Vector2(80, 5), new Vector2(110, 5) };
         Vector2 myPlayerSpritePosition = new Vector2(93, 26);
 
@@ -107,21 +106,6 @@ namespace ConsoleRPG
             theGameManager.EndBattle();
         }
 
-        //???
-        List<BattleOption> CreateBattleOptionsEnemy()
-        {
-            List<BattleOption> enemyNameList = new List<BattleOption>();
-            int y = 3;
-            for (int i = 0; i < myEnemies.Count; i++)
-            {
-                y += 2;
-                BattleOption enemy = new BattleOption(myEnemies[i].myName, myEnemies[i].myBattleID, new Vector2(10, y));
-                enemyNameList.Add(enemy);
-            }
-
-            return enemyNameList;
-        }
-
         void DrawBattleScene()
         {
             Vector2 nameOnScreenTemp = myEnemyNameOnScreenPosition;
@@ -147,11 +131,6 @@ namespace ConsoleRPG
             myPlayer.DrawSprite(myPlayerSpritePosition);
             UpdateHPDisplayed(myPlayer.myBattlePosition, myPlayer);
             PlaySound(myBattleStartPlayer);
-        }
-
-        void PrintEnemyNames()
-        {
-
         }
 
         void DrawEnemies()

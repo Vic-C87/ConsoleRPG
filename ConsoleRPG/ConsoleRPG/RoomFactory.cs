@@ -43,30 +43,30 @@ namespace ConsoleRPG
 					3, false,
 					new Dictionary<int, DoorDirections>() { { 2, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Room_S.txt",
+					rootRoomPath + "CloakRoom.txt",
 					true);//Key to door 5
 			newRoom.AddKeyToChest(1);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Hall", "a hall",
+			newRoom = new Room("Hallway A", "a hall",
 					4, false,
 					new Dictionary<int, DoorDirections>() { { 3, DoorDirections.East }, { 4, DoorDirections.West }, { 12, DoorDirections.North } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W-N-E.txt");
+						   rootRoomPath + "HallwayA.txt");
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Sittingroom", "a large sittingroom with ...",
+			newRoom = new Room("Hallway B", "a hallway",
 					5, false,
 					new Dictionary<int, DoorDirections>() { { 4, DoorDirections.East }, { 5, DoorDirections.West } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W-E.txt"); //Loot
+						   rootRoomPath + "HallwayB.txt"); //Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Large bedroom", "a grand bedroom",
 					6, false,
 					new Dictionary<int, DoorDirections>() { { 5, DoorDirections.East }, { 6, DoorDirections.South } },
 						   new List<int>(),
-						   rootRoomPath + "Room_E-S.txt",
+						   rootRoomPath + "Bedroom.txt",
 						   true);//Loot and Key to door 7
 			newRoom.AddKeyToChest(2);
 			myRooms.Add(newRoom.myRoomID, newRoom);
@@ -75,14 +75,15 @@ namespace ConsoleRPG
 					7, false,
 					new Dictionary<int, DoorDirections>() { { 6, DoorDirections.North } },
 						   new List<int>(),
-						   rootRoomPath + "Room_N.txt");
+						   rootRoomPath + "Bathroom.txt",
+						   true);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Diningroom", "a big diningroom",
 					8, false,
 					new Dictionary<int, DoorDirections>() { { 7, DoorDirections.West }, { 8, DoorDirections.South }, { 10, DoorDirections.North }, { 11, DoorDirections.East } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W-N-E-S.txt");//Loot
+						   rootRoomPath + "DiningHall.txt");//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Washroom", "an old and small washroom",
@@ -96,7 +97,8 @@ namespace ConsoleRPG
 					10, false,
 					new Dictionary<int, DoorDirections>() { { 9, DoorDirections.West } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W.txt");//Loot
+						   rootRoomPath + "Room_W.txt",
+						   true);//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Kitchen", "a big kitchen...",
@@ -121,10 +123,11 @@ namespace ConsoleRPG
 					13, false,
 					new Dictionary<int, DoorDirections>() { { 12, DoorDirections.South }, { 13, DoorDirections.East } },
 						   new List<int>(),
-						   rootRoomPath + "Room_E-S.txt");//Loot
+						   rootRoomPath + "Room_E-S.txt",
+						   true);//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Master suit", "a wide courtyard",
+			newRoom = new Room("Master suit", "the master suite",
 					14, false,
 					new Dictionary<int, DoorDirections>() { { 13, DoorDirections.West } },
 						   new List<int>(),

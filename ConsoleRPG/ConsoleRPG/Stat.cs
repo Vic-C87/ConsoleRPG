@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
-    internal class Item
+    internal class Stat
     {
 
     }

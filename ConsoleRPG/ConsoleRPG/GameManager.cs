@@ -19,6 +19,7 @@ namespace ConsoleRPG
         bool myMansionAmbiencePlaying = false;
 
         bool myPortalPlaced = false;
+        int myPortalRoom;
         bool myPortalTrigger = false;
         bool myRoomPortalTrigger = false;
 
@@ -169,17 +170,21 @@ namespace ConsoleRPG
                             Console.Write("    ");
                             Utilities.CursorPosition(29, 17);
                             Console.Write("    ");
-                            DrawLock(29, 18);
+                            Utilities.CursorPosition(29, 18);
+                            Console.Write("     ");
+                            DrawLock(29, 19);
                             break;
                         case DoorDirections.North:
-                            DrawLock(80, 12);
+                            DrawLock(79, 13);
                             break;
                         case DoorDirections.East:
                             Utilities.CursorPosition(131, 16);
                             Console.Write("    ");
                             Utilities.CursorPosition(131, 17);
                             Console.Write("    ");
-                            DrawLock(131, 18);
+                            Utilities.CursorPosition(131, 18);
+                            Console.Write("    ");
+                            DrawLock(131, 19);
                             break;
                         case DoorDirections.South:
                             DrawLock(79, 31);
@@ -279,7 +284,7 @@ namespace ConsoleRPG
                     Utilities.CursorPosition();
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
-                else if (myPortalPlaced && yPosition == 16 && (xPosition == 108 || xPosition == 109 || xPosition == 110 || xPosition == 111))
+                else if (myPortalPlaced && myPlayer.myCurrentRoom == myPortalRoom && yPosition == 16 && (xPosition == 108 || xPosition == 109 || xPosition == 110 || xPosition == 111))
                 {
                     myRoomPortalTrigger = true;
                     Utilities.CursorPosition();
@@ -449,6 +454,7 @@ namespace ConsoleRPG
             {
                 myPortal.PlacePortal(myPlayer.myCurrentRoom);
                 myPortalPlaced = true;
+                myPortalRoom = myPlayer.myCurrentRoom;
             }
             else if (input.Key == ConsoleKey.F2)//Debug
             {
