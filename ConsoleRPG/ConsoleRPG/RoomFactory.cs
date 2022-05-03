@@ -90,14 +90,14 @@ namespace ConsoleRPG
 					9, false,
 					new Dictionary<int, DoorDirections>() { { 8, DoorDirections.North }, { 9, DoorDirections.East } },
 						   new List<int>(),
-						   rootRoomPath + "Room_N-E.txt");
+						   rootRoomPath + "Washroom.txt");
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Storageroom", "a small dusty storeroom",
 					10, false,
 					new Dictionary<int, DoorDirections>() { { 9, DoorDirections.West } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W.txt",
+						   rootRoomPath + "Storageroom.txt",
 						   true);//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
@@ -105,7 +105,7 @@ namespace ConsoleRPG
 					11, false,
 					new Dictionary<int, DoorDirections>() { { 10, DoorDirections.South } },
 						   new List<int>(),
-						   rootRoomPath + "Room_S.txt",
+						   rootRoomPath + "Kitchen.txt",
 						   true);//Loot and Key to door 11
 			newRoom.AddKeyToChest(3);
 			myRooms.Add(newRoom.myRoomID, newRoom);
@@ -114,16 +114,16 @@ namespace ConsoleRPG
 					12, false,
 					new Dictionary<int, DoorDirections>() { { 11, DoorDirections.West } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W.txt",
+						   rootRoomPath + "Library.txt",
 						   true);//Loot and Key to door 12
 			newRoom.AddKeyToChest(4);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Large study", "a large study with a big desk at the far end of the room",
+			newRoom = new Room("Office", "a large study with a big desk at the far end of the room",
 					13, false,
 					new Dictionary<int, DoorDirections>() { { 12, DoorDirections.South }, { 13, DoorDirections.East } },
 						   new List<int>(),
-						   rootRoomPath + "Room_E-S.txt",
+						   rootRoomPath + "Office.txt",
 						   true);//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
@@ -131,7 +131,7 @@ namespace ConsoleRPG
 					14, false,
 					new Dictionary<int, DoorDirections>() { { 13, DoorDirections.West } },
 						   new List<int>(),
-						   rootRoomPath + "Room_W.txt");//Loot
+						   rootRoomPath + "MasterSuite.txt");//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 		}
 
