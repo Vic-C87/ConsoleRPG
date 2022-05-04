@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
     internal class Spellbook
     {
-        List<Spell> mySpells;
+        readonly List<Spell> mySpells;
 
         public Spellbook()
         {
@@ -22,6 +19,7 @@ namespace ConsoleRPG
 
         public void UseSpell(int aSpellIndex, Actor aTarget)
         {
+            SoundManager.PlaySound(mySpells[aSpellIndex].mySpellSound);
             aTarget.TakeDamage(mySpells[aSpellIndex].myDamage);
         }
 

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
@@ -72,13 +68,17 @@ namespace ConsoleRPG
             myBattleNameOnScreenPosition = new Vector2();
         }
 
-        public void BattleAction()
-        {
-
-        }
 
         public int Attack()
         {
+            if (myIsPlayer)
+            {
+                SoundManager.PlaySound(SoundType.EnemyHurt);
+            }
+            else
+            {
+                SoundManager.PlaySound(SoundType.PlayerHurt);
+            }
             return myDamage;
         }
 
@@ -94,6 +94,7 @@ namespace ConsoleRPG
 
         public void Heal(int aHealAmount)
         {
+            SoundManager.PlaySound(SoundType.Heal);
             myHP += aHealAmount;
             if (myHP > myMaxHP)
             {

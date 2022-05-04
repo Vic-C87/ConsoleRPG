@@ -10,7 +10,7 @@ namespace ConsoleRPG
     {
         public List<Item> myItems;
         public int myKeyID;
-        char[,] mySprite;
+        readonly char[,] mySprite;
         public bool myIsOpened;
         Vector2 myOffSet;
 

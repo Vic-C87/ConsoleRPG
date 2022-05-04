@@ -7,7 +7,7 @@ namespace ConsoleRPG
 {
     internal static class Utilities
     {
-        static Random random = new Random();
+        static readonly Random random = new Random();
 
         /// <summary>
         /// Draws a char-symbol at given position
@@ -233,5 +233,17 @@ namespace ConsoleRPG
         ActionFrame,
         SpellFrame,
         EnemyNameFrame
+    }
+
+    enum SoundType
+    {
+        EnemyHurt,
+        PlayerHurt,
+        BattleStart,
+        Heal,
+        LighningHurt,
+        BattleVictory,
+        MansionAmbience,
+        VillageAmbience
     }
 }

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Media;
 
 namespace ConsoleRPG
 {
@@ -18,32 +14,31 @@ namespace ConsoleRPG
         Actor myPlayer;
         List<Actor> myEnemies;
 
+        char[,] myVerticalFrame;
+        char[,] myHorizontalLeftFrame;
+
         bool myPlayerStillAlive;
         bool myEnemiesStillAlive;
-
-        SoundPlayer myBatHitPlayer;
-        SoundPlayer myPlayerHitPlayer;
-        SoundPlayer myBattleStartPlayer;
-        SoundPlayer myHealEffectPlayer;
-        SoundPlayer myBatLightningHitPlayer;
-        SoundPlayer myBattleVictoryPlayer;
-        Stopwatch myStopWatch;
+        readonly Stopwatch myStopWatch;
 
         int myPlayerCoolDownCounter;
 
-        Vector2[] myEnemySpritePositions = new Vector2[3] { new Vector2(50, 5), new Vector2(80, 5), new Vector2(110, 5) };
-        Vector2 myPlayerSpritePosition = new Vector2(93, 26);
+        readonly Vector2[] myEnemySpritePositions = new Vector2[3] { new Vector2(60, 9), new Vector2(90, 9), new Vector2(120, 9) };
+        readonly Vector2 myPlayerSpritePosition = new Vector2(103, 28);
 
-        Vector2[] myEnemySelectorPositons = new Vector2[3] { new Vector2(9, 5), new Vector2(9, 7), new Vector2(9, 9) };
-        Vector2 myEnemyNameOnScreenPosition = new Vector2(10, 5); //Increment by Vector2.Down() x2 foreach
+        readonly Vector2[] myEnemySelectorPositons = new Vector2[3] { new Vector2(13, 12), new Vector2(13, 14), new Vector2(13, 16) };
+        Vector2 myEnemyNameOnScreenPosition = new Vector2(14, 12); //Increment by Vector2.Down() x2 foreach
 
-        Vector2[] myActionSelectorPositions = new Vector2[3] { new Vector2(9, 32), new Vector2(9, 34), new Vector2(9, 36) };
+        readonly Vector2[] myActionSelectorPositions = new Vector2[3] { new Vector2(9, 32), new Vector2(9, 34), new Vector2(9, 36) };
         Vector2 myAttackOptionPosition = new Vector2(10, 32);
         Vector2 myMagicOptionPosition = new Vector2(10, 34);
         Vector2 myDefendOptionPosition = new Vector2(10, 36);
 
-        Vector2[] mySpellSelectorPositions = new Vector2[3] { new Vector2(20, 32), new Vector2(20, 34), new Vector2(20, 36) };
+        readonly Vector2[] mySpellSelectorPositions = new Vector2[3] { new Vector2(20, 32), new Vector2(20, 34), new Vector2(20, 36) };
         Vector2 mySpellNamePosition = new Vector2(21, 32);
+
+        Vector2 myVertFramePosition = new Vector2(30, 0);
+        Vector2 myHoriLeftFramePosition = new Vector2(0, 25);
 
         bool mySelectAction = false;
         bool mySelectEnemy = false;
@@ -57,23 +52,17 @@ namespace ConsoleRPG
             myPlayerStillAlive = false;
             myEnemiesStillAlive = false;
             myStopWatch = new Stopwatch();
+            myVerticalFrame = Utilities.ReadFromFile(@"Sprites\VerticalFrame.txt", out string aTitle);
+            myHorizontalLeftFrame = Utilities.ReadFromFile(@"Sprites\HorizontalLeftFrame.txt", out string bTitle);
             myPlayerCoolDownCounter = 0;
-            if (OperatingSystem.IsWindows())
-            {
-                myBatHitPlayer = new SoundPlayer(@"Audio\batHit.wav");
-                myPlayerHitPlayer = new SoundPlayer(@"Audio\playerHit.wav");
-                myBattleStartPlayer = new SoundPlayer(@"Audio\battleStart.wav");
-                myHealEffectPlayer = new SoundPlayer(@"Audio\healEffect.wav");
-                myBatLightningHitPlayer = new SoundPlayer(@"Audio\batLightningHit.wav");
-                myBattleVictoryPlayer = new SoundPlayer(@"Audio\battleVictory.wav");
-            }
+
         }
         void ResetBattleScene()
         {
             myTurnListByBattleID = new List<int>();
             myEnemies = new List<Actor>();
         }
-        public void StartBattle(List<Actor> anEnemyList, Player aPlayerReference, GameManager theGameManager)
+        public void StartBattle(List<Actor> anEnemyList, Player aPlayerReference, GameManager theGameManager, char[,] aRoomSprite)
         {
             
             myPlayer = new Actor(aPlayerReference);
@@ -89,7 +78,7 @@ namespace ConsoleRPG
             }
             
             myStopWatch.Start();
-            DrawBattleScene();
+            DrawBattleScene(aRoomSprite);
             while (myPlayerStillAlive && myEnemiesStillAlive)
             {
                 SetTurnList();
@@ -98,7 +87,7 @@ namespace ConsoleRPG
             }
             Utilities.CursorPosition(85, 22);
             Console.Write("Victory! ");
-            PlaySound(myBattleVictoryPlayer);
+            SoundManager.PlaySound(SoundType.BattleVictory);
             Utilities.PressEnterToContinue();
             myStopWatch.Reset();
             aPlayerReference.myCurrentHP = myPlayer.myHP;
@@ -106,7 +95,7 @@ namespace ConsoleRPG
             theGameManager.EndBattle();
         }
 
-        void DrawBattleScene()
+        void DrawBattleScene(char[,] aRoomSprite)
         {
             Vector2 nameOnScreenTemp = myEnemyNameOnScreenPosition;
             Console.Clear();
@@ -125,12 +114,39 @@ namespace ConsoleRPG
             Console.WriteLine("Magic");
             Utilities.Cursor(myDefendOptionPosition);
             Console.WriteLine("Defend");
-
-            //EDIT
+            Vector2 roomWallPosition = new Vector2(50, 0);
+            for (int y = 0; y < 7; y++)
+            {
+                for (int x = 0; x < aRoomSprite.GetLength(0); x++)
+                {
+                    Utilities.Draw(x + roomWallPosition.X, y + roomWallPosition.Y, aRoomSprite[x, y]);
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            DrawSprite(myVertFramePosition, myVerticalFrame);
+            DrawSprite(myHoriLeftFramePosition, myHorizontalLeftFrame);
+            Console.ForegroundColor = ConsoleColor.White;
             DrawEnemies();
             myPlayer.DrawSprite(myPlayerSpritePosition);
-            UpdateHPDisplayed(myPlayer.myBattlePosition, myPlayer);
-            PlaySound(myBattleStartPlayer);
+            UpdateHPDisplayed(myPlayer);
+            SoundManager.PlaySound(SoundType.BattleStart);
+        }
+
+        void DrawSprite(Vector2 anOffSet, char[,] aSprite)
+        {
+            for (int y = 0; y < aSprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < aSprite.GetLength(0); x++)
+                {
+                    Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, aSprite[x,y]);
+                }
+            }
+        }
+
+        void DisplayCooldown()
+        {
+            //Utilities.CursorPosition(103, 34);
+            //Console.Write(myPlayerCoolDownCounter);
         }
 
         void DrawEnemies()
@@ -157,15 +173,15 @@ namespace ConsoleRPG
 
             for (int i = 0; i < numberOfEnemies; i++)
             {
-                UpdateHPDisplayed(myEnemies[i].myBattlePosition, myEnemies[i]);
+                UpdateHPDisplayed(myEnemies[i]);
             }
         }
 
-        void UpdateHPDisplayed(Vector2 aScreenPosition, Actor anActor)
+        static void UpdateHPDisplayed(Actor anActor)
         {
-            Utilities.Cursor(aScreenPosition.Up());
+            Utilities.Cursor(anActor.myBattlePosition.Up());
             Console.Write("        ");
-            Utilities.Cursor(aScreenPosition.Up());
+            Utilities.Cursor(anActor.myBattlePosition.Up());
             Console.Write(anActor.myHP + "/" + anActor.myMaxHP + " HP");
         }
 
@@ -195,8 +211,7 @@ namespace ConsoleRPG
             if (actionSelected == Actions.Attack)
             {
                 Attack(myPlayer, myEnemies[selectIndex]);
-                PlaySound(myBatHitPlayer);
-                UpdateHPDisplayed(myEnemies[selectIndex].myBattlePosition, myEnemies[selectIndex]);
+                UpdateHPDisplayed(myEnemies[selectIndex]);
                 Thread.Sleep(1000);
             }
             else if (actionSelected == Actions.Magic)
@@ -221,29 +236,16 @@ namespace ConsoleRPG
                 }
 
                 myPlayer.mySpellbook.UseSpell(spellIndexToCast, myEnemies[selectIndex]);
-                PlaySound(myBatLightningHitPlayer);
-                UpdateHPDisplayed(myEnemies[selectIndex].myBattlePosition, myEnemies[selectIndex]);
-                //CheckAlive(myEnemies[selectIndex]);
+                UpdateHPDisplayed(myEnemies[selectIndex]);
                 myPlayer.mySpellbook.CloseSpellbook(mySpellNamePosition);
                 Thread.Sleep(1000);
-
-
             }
             else if (actionSelected == Actions.Defend)
             {
                 myPlayer.Heal(5);
-                PlaySound(myHealEffectPlayer);
-                UpdateHPDisplayed(myPlayer.myBattlePosition, myPlayer);
+                UpdateHPDisplayed(myPlayer);
             }
             
-        }
-
-        void PlaySound(SoundPlayer aSoundPlayer)
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                aSoundPlayer.Play();
-            }
         }
 
         void GetSelectionInput(Vector2[] someOptionPositions, int aMenuOptionsCount, FrameType aFrameType,ref int aSelectIndex, ref bool aSelectTypeBool)
@@ -316,10 +318,13 @@ namespace ConsoleRPG
                 {
                     waitingSinceCooldown.Add(myPlayer.myBattleID, timeSinceLastAttack - myPlayer.myCoolDown);
                     myPlayer.myLastAttackTime = 0;
+                    myPlayerCoolDownCounter = 0;
+                    DisplayCooldown();
                 }
                 else
                 {
                     myPlayerCoolDownCounter = (myPlayer.myCoolDown - timeSinceLastAttack)/1000;
+                    DisplayCooldown();
                     //Update cooldowntimer
                 }
             }
@@ -382,9 +387,7 @@ namespace ConsoleRPG
                                 if (myEnemies[i].myIsAlive)
                                 {
                                     Attack(myEnemies[i], myPlayer);
-                                    PlaySound(myPlayerHitPlayer);
-                                    UpdateHPDisplayed(myPlayer.myBattlePosition, myPlayer);
-
+                                    UpdateHPDisplayed(myPlayer);
                                 }
                                 myEnemies[i].myLastAttackTime = myStopWatch.ElapsedMilliseconds;
                                 myTurnListByBattleID.RemoveAt(0);

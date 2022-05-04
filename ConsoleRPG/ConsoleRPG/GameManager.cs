@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Media;
-
 
 namespace ConsoleRPG
 {
@@ -24,24 +20,22 @@ namespace ConsoleRPG
         bool myRoomPortalTrigger = false;
 
         bool myChestTrigger = false;
-        SoundPlayer myMansionAmbiencePlayer;
-        SoundPlayer myVillageAmbiencePlayer;
+        bool myPickUpText = false;
 
         Player myPlayer;
-        TownPortal myPortal;
+        readonly TownPortal myPortal;
 
         Vector2 myDrawRoomOffSet = new Vector2(30, 9);
         Vector2 myPlayerPositionBeforeBattle = new Vector2();
 
         Dictionary<int, Door> myDoorsByID;
         Dictionary<int, Room> myRoomsByID;
+        readonly Dictionary<DoorDirections, bool> myHaveDoors;
+        readonly Dictionary<DoorDirections, bool> myDoorTriggerActivated;
 
-        Dictionary<DoorDirections, bool> myHaveDoors;
-        Dictionary<DoorDirections, bool> myDoorTriggerActivated;
-
-        BattleManager myBattleManager;
-        GameManager myGameManager;
-        SpellFactory mySpellFactory;
+        readonly BattleManager myBattleManager;
+        readonly GameManager myGameManager;
+        readonly SpellFactory mySpellFactory;
 
         char[,] myDoorLockSprite;
 
@@ -55,6 +49,7 @@ namespace ConsoleRPG
             myGameManager = this;
             mySpellFactory = new SpellFactory();
             myPortal = new TownPortal();
+            SoundManager.LoadSounds();
 
             Load();
             EnterRoom(DoorDirections.North);
@@ -91,12 +86,6 @@ namespace ConsoleRPG
             myDoorTriggerActivated.Add(DoorDirections.North, false);
             myDoorTriggerActivated.Add(DoorDirections.East, false);
             myDoorTriggerActivated.Add(DoorDirections.South, false);
-
-            if (OperatingSystem.IsWindows())
-            {
-                myMansionAmbiencePlayer = new SoundPlayer(@"Audio\mansionAmbience.wav");
-                myVillageAmbiencePlayer = new SoundPlayer(@"Audio\villageAmbience.wav");
-            }
 
             myDoorLockSprite = Utilities.ReadFromFile(@"Sprites\Lock.txt", out string lockName);
         }
@@ -140,18 +129,15 @@ namespace ConsoleRPG
 
         void EnterRoom(DoorDirections anEntryPoint)
         {
-            if (!myMansionAmbiencePlaying && OperatingSystem.IsWindows())
+            if (!myMansionAmbiencePlaying)
             {
-                myMansionAmbiencePlayer.PlayLooping();
+                SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myMansionAmbiencePlaying = true;
             }
             if (myPlayer.myCurrentRoom == 0)
             {
-                if (OperatingSystem.IsWindows())
-                {
-                    myVillageAmbiencePlayer.PlayLooping();
-                    myMansionAmbiencePlaying = false;
-                }
+                SoundManager.PlaySound(SoundType.VillageAmbience, true);
+                myMansionAmbiencePlaying = false;
                 
                 anEntryPoint = DoorDirections.North;
             }
@@ -219,9 +205,9 @@ namespace ConsoleRPG
 
         void EnterRoom(Vector2 aPlayerSpawnPosition)
         {
-            if (!myMansionAmbiencePlaying && OperatingSystem.IsWindows())
+            if (!myMansionAmbiencePlaying)
             {
-                myMansionAmbiencePlayer.PlayLooping();
+                SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myMansionAmbiencePlaying = true;
             }
             ResetHasDoors();
@@ -375,6 +361,7 @@ namespace ConsoleRPG
                 if(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
                 {
                     myPlayer.myKeyIDs.Add(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID);
+                    DisplayPickUpText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID);
                 }
             }
         }
@@ -435,16 +422,19 @@ namespace ConsoleRPG
             {
                 if (aGameObject.MyPosition.Right().X < myRoomsByID[myPlayer.myCurrentRoom].myEastBound + myDrawRoomOffSet.X - aGameObject.MyWidth)
                     aGameObject.Move(aGameObject.MyPosition.Right());
+                HidePickUpText();
             }
             else if (input.Key == ConsoleKey.DownArrow)
             {
                 if (aGameObject.MyPosition.Down().Y < myRoomsByID[myPlayer.myCurrentRoom].mySouthBound + myDrawRoomOffSet.Y - aGameObject.MyHeight)
                     aGameObject.Move(aGameObject.MyPosition.Down());
+                HidePickUpText();
             }
             else if (input.Key == ConsoleKey.LeftArrow)
             {
                 if (aGameObject.MyPosition.Left().X > myRoomsByID[myPlayer.myCurrentRoom].myWestBound + myDrawRoomOffSet.X)
                     aGameObject.Move(aGameObject.MyPosition.Left());
+                HidePickUpText();
             }
             else if (input.Key == ConsoleKey.Enter)
             {
@@ -462,21 +452,16 @@ namespace ConsoleRPG
             }
         }
 
-        Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)  //Refactor! Calculate from roomsize!
+        static Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)  //Refactor! Calculate from roomsize!
         {
-            switch (anEntryPoint)
+            return anEntryPoint switch
             {
-                case DoorDirections.West:
-                    return new Vector2(126, 17);                   
-                case DoorDirections.North:
-                    return new Vector2(81, 25);                    
-                case DoorDirections.East:
-                    return new Vector2(36, 17);                   
-                case DoorDirections.South:
-                    return new Vector2(81, 17);
-                default:
-                    return new Vector2(81, 25);
-            }
+                DoorDirections.West => new Vector2(126, 17),
+                DoorDirections.North => new Vector2(81, 25),
+                DoorDirections.East => new Vector2(36, 17),
+                DoorDirections.South => new Vector2(81, 17),
+                _ => new Vector2(81, 25),
+            };
         }
 
         /// <summary>
@@ -484,7 +469,7 @@ namespace ConsoleRPG
         /// </summary>
         /// <param name="aFilePath"></param>
         /// <returns></returns>
-        GameObject ReadSpriteFromFile(string aFilePath)
+        static GameObject ReadSpriteFromFile(string aFilePath)
         {
             string title;
             char[,] sprite = Utilities.ReadFromFile(aFilePath, out title);
@@ -504,13 +489,46 @@ namespace ConsoleRPG
             myBattleMode = true;
             myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
             myMansionAmbiencePlaying = false;
-            myBattleManager.StartBattle(testBattleEnemies, myPlayer, myGameManager);
+            myBattleManager.StartBattle(testBattleEnemies, myPlayer, myGameManager, myRoomsByID[myPlayer.myCurrentRoom].myRoomMap);
         }
 
         public void EndBattle()
         {
             myBattleMode = false;
             EnterRoom(myPlayerPositionBeforeBattle);
+        }
+
+        void DisplayPickUpText(int aKeyID)//Change to itemID when inventory is implemented
+        {
+            myPickUpText = true;
+            Utilities.CursorPosition(135, 1);
+            Console.Write("You've picked up: " + KeyIDToText(aKeyID));
+        }
+
+        void HidePickUpText()
+        {
+            if (myPickUpText)
+            {
+                myPickUpText = false;
+                Utilities.CursorPosition(135, 1);
+                for (int i = 0; i < 34; i++)
+                {
+                    Console.Write(" ");
+                }
+            }
+        }
+
+        static string KeyIDToText(int aKeyID)
+        {
+            string keyName = aKeyID switch
+            {
+                1 => "West-wing key",
+                2 => "East-wing key",
+                3 => "Library key",
+                4 => "Master suite key",
+                _ => " ",
+            };
+            return keyName;
         }
     }
 }

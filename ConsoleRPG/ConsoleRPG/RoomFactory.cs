@@ -4,7 +4,7 @@ namespace ConsoleRPG
 {
     internal class RoomFactory
     {
-		Dictionary<int, Room> myRooms;
+		readonly Dictionary<int, Room> myRooms;
 
 		public RoomFactory()
 		{

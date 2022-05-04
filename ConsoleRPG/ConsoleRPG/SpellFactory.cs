@@ -8,7 +8,7 @@ namespace ConsoleRPG
 {
     internal class SpellFactory
     {
-        List<Spell> mySpellList;
+        readonly List<Spell> mySpellList;
 
         public SpellFactory()
         {
@@ -16,13 +16,13 @@ namespace ConsoleRPG
 
             Spell newSpell;
 
-            newSpell = new Spell("Lightning Bolt", SpellType.LightningBolt, 10);
+            newSpell = new Spell("Lightning Bolt", SpellType.LightningBolt, SoundType.LighningHurt, 10);
             mySpellList.Add(newSpell);
 
-            newSpell = new Spell("Fire Ball", SpellType.Fireball, 10);
+            newSpell = new Spell("Fire Ball", SpellType.Fireball, SoundType.EnemyHurt, 10);
             mySpellList.Add(newSpell);
 
-            newSpell = new Spell("Ice Blast", SpellType.Iceblast, 10);
+            newSpell = new Spell("Ice Blast", SpellType.Iceblast, SoundType.EnemyHurt, 10);
             mySpellList.Add((newSpell));
         }
 
