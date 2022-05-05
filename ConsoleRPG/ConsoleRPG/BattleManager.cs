@@ -14,8 +14,8 @@ namespace ConsoleRPG
         Actor myPlayer;
         List<Actor> myEnemies;
 
-        char[,] myVerticalFrame;
-        char[,] myHorizontalLeftFrame;
+        readonly char[,] myVerticalFrame;
+        readonly char[,] myHorizontalLeftFrame;
 
         bool myPlayerStillAlive;
         bool myEnemiesStillAlive;
@@ -132,7 +132,7 @@ namespace ConsoleRPG
             SoundManager.PlaySound(SoundType.BattleStart);
         }
 
-        void DrawSprite(Vector2 anOffSet, char[,] aSprite)
+        static void DrawSprite(Vector2 anOffSet, char[,] aSprite)
         {
             for (int y = 0; y < aSprite.GetLength(1); y++)
             {

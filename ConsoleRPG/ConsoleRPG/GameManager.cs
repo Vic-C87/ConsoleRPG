@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace ConsoleRPG
 {
@@ -38,6 +39,8 @@ namespace ConsoleRPG
         readonly SpellFactory mySpellFactory;
 
         char[,] myDoorLockSprite;
+
+        Vector2 myTextFeedBackPosition = new Vector2(34, 5);
 
         public GameManager()
         {
@@ -194,6 +197,7 @@ namespace ConsoleRPG
 
         void DrawLock(int anXOffSet, int aYOffSet)
         {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             for (int y = 0; y < myDoorLockSprite.GetLength(1); y++)
             {
                 for (int x = 0; x < myDoorLockSprite.GetLength(0); x++)
@@ -201,6 +205,7 @@ namespace ConsoleRPG
                     Utilities.Draw(x + anXOffSet, y + aYOffSet, myDoorLockSprite[x, y]);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         void EnterRoom(Vector2 aPlayerSpawnPosition)
@@ -226,60 +231,60 @@ namespace ConsoleRPG
                 if (xPosition == 127 && (yPosition == 23 || yPosition == 24 || yPosition == 25 || yPosition == 26))
                 {
                     myDoorTriggerActivated[DoorDirections.East] = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
                 else if (myPortalPlaced && yPosition == 20 && (xPosition == 32 || xPosition == 33 || xPosition == 34 || xPosition == 35))
                 {
                     myPortalTrigger = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use portal");
                 }
                 else //Reset trigger
                 {
                     ResetDoorTriggers();
                     myPortalTrigger = false;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("                           ");
                 }
             }
             else
             {
                 //Check west door trigger
-                if (myHaveDoors[DoorDirections.West] && xPosition == 35 && (yPosition == 16 || yPosition == 17 || yPosition == 18))
+                if (myHaveDoors[DoorDirections.West] && xPosition == 35 && (yPosition == 17 || yPosition == 18 || yPosition == 19))
                 {
                     myDoorTriggerActivated[DoorDirections.West] = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use door");
                 }//Check north door trigger
-                else if (myHaveDoors[DoorDirections.North] && yPosition == 16 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
+                else if (myHaveDoors[DoorDirections.North] && yPosition == 16 && (xPosition == 78 || xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
                 {
                     myDoorTriggerActivated[DoorDirections.North] = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use door");
                 }//Check east door trigger
-                else if (myHaveDoors[DoorDirections.East] && xPosition == 127 && (yPosition == 16 || yPosition == 17 || yPosition == 18))
+                else if (myHaveDoors[DoorDirections.East] && xPosition == 127 && (yPosition == 17 || yPosition == 18 || yPosition == 19))
                 {
                     myDoorTriggerActivated[DoorDirections.East] = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use door");
                 }//Check south door trigger
-                else if (myHaveDoors[DoorDirections.South] && yPosition == 26 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
+                else if (myHaveDoors[DoorDirections.South] && yPosition == 27 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
                 {
                     myDoorTriggerActivated[DoorDirections.South] = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
                 else if (myPortalPlaced && myPlayer.myCurrentRoom == myPortalRoom && yPosition == 16 && (xPosition == 108 || xPosition == 109 || xPosition == 110 || xPosition == 111))
                 {
                     myRoomPortalTrigger = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use portal");
                 }
                 else if (CanOpenChest() && yPosition == 16 &&(xPosition == 93 || xPosition == 94 || xPosition == 95 || xPosition == 96))
                 {
                     myChestTrigger = true;
-                    Utilities.CursorPosition();
+                    Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to open chest");
                 }
                 else //Reset trigger
@@ -287,8 +292,9 @@ namespace ConsoleRPG
                     ResetDoorTriggers();
                     myRoomPortalTrigger = false;
                     myChestTrigger = false;
-                    Utilities.CursorPosition();
-                    Console.WriteLine("                           ");
+                    Utilities.Cursor(myTextFeedBackPosition);
+                    Console.Write("                           ");
+                    Utilities.Cursor(myTextFeedBackPosition.Down());
                     Console.Write("                                               ");
                 }
 
@@ -336,8 +342,15 @@ namespace ConsoleRPG
                 }
                 else
                 {
-                    Utilities.CursorPosition(0, 1);
-                    Console.Write("Door is LOCKED. You need to find the right KEY.");
+                    Utilities.Cursor(myTextFeedBackPosition.Down());
+                    Console.Write("Door is ");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.Write("LOCKED");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write(". You need to find the right ");
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.Write("KEY");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             } 
             if (myPortalTrigger)
@@ -357,6 +370,9 @@ namespace ConsoleRPG
             if (myChestTrigger)
             {
                 List<Item> items = new List<Item>();
+                myChestTrigger = false;
+                Utilities.Cursor(myTextFeedBackPosition);
+                Console.Write("                           ");
                 items = myRoomsByID[myPlayer.myCurrentRoom].myChest.OpenChest();
                 if(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
                 {
@@ -442,7 +458,10 @@ namespace ConsoleRPG
             }
             else if (input.Key == ConsoleKey.F1 && myPlayer.myCurrentRoom != 0)//Change key?
             {
+                SoundManager.PlaySound(SoundType.PortalCast);
+                Thread.Sleep(2000);
                 myPortal.PlacePortal(myPlayer.myCurrentRoom);
+                SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myPortalPlaced = true;
                 myPortalRoom = myPlayer.myCurrentRoom;
             }
@@ -501,8 +520,10 @@ namespace ConsoleRPG
         void DisplayPickUpText(int aKeyID)//Change to itemID when inventory is implemented
         {
             myPickUpText = true;
-            Utilities.CursorPosition(135, 1);
+            Utilities.CursorPosition(82, 6);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("You've picked up: " + KeyIDToText(aKeyID));
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         void HidePickUpText()
@@ -510,7 +531,7 @@ namespace ConsoleRPG
             if (myPickUpText)
             {
                 myPickUpText = false;
-                Utilities.CursorPosition(135, 1);
+                Utilities.CursorPosition(82, 6);
                 for (int i = 0; i < 34; i++)
                 {
                     Console.Write(" ");

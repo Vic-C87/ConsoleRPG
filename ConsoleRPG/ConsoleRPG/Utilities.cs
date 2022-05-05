@@ -244,6 +244,9 @@ namespace ConsoleRPG
         LighningHurt,
         BattleVictory,
         MansionAmbience,
-        VillageAmbience
+        VillageAmbience,
+        PortalCast,
+        OpenChest,
+        GetKey
     }
 }

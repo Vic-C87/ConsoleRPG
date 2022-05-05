@@ -31,6 +31,7 @@ namespace ConsoleRPG
         public void DrawChest(Vector2 anOffSet)
         {
             myOffSet = anOffSet;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             for (int y = 0; y < mySprite.GetLength(1); y++)
             {
                 for (int x = 0; x < mySprite.GetLength(0); x++)
@@ -38,11 +39,13 @@ namespace ConsoleRPG
                     Utilities.Draw(x + myOffSet.X, y + myOffSet.Y, mySprite[x, y]);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public List<Item> OpenChest()
         {
             myIsOpened = true;
+            SoundManager.PlaySound(SoundType.OpenChest, false, true);
             for (int y = 0; y < mySprite.GetLength(1); y++)
             {
                 for (int x = 0; x < mySprite.GetLength(0); x++)
@@ -53,6 +56,11 @@ namespace ConsoleRPG
                     }
                 }
             }
+            if(myKeyID != 0)
+            {
+                SoundManager.PlaySound(SoundType.GetKey, false, true);
+            }
+            SoundManager.PlaySound(SoundType.MansionAmbience, true);
 
             return myItems;
         }
