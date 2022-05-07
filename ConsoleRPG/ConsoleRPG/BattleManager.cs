@@ -39,7 +39,6 @@ namespace ConsoleRPG
 
         Vector2 myVertFramePosition = new Vector2(30, 0);
         Vector2 myHoriLeftFramePosition = new Vector2(0, 25);
-
         bool mySelectAction = false;
         bool mySelectEnemy = false;
         bool mySelectSpell = false;
@@ -251,6 +250,8 @@ namespace ConsoleRPG
         void GetSelectionInput(Vector2[] someOptionPositions, int aMenuOptionsCount, FrameType aFrameType,ref int aSelectIndex, ref bool aSelectTypeBool)
         {
             ConsoleKeyInfo selection;
+            while (Console.KeyAvailable)
+                Console.ReadKey(false);
 
             selection = Console.ReadKey(true);
 

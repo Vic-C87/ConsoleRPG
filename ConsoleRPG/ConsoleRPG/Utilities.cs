@@ -188,6 +188,38 @@ namespace ConsoleRPG
             return map;
         }
 
+        static public Dialogue GetDialogue(string aDialoguePath)
+        {
+            string title = "";
+            string idTemp = "0";
+            int id;
+            List<string> lines = new List<string>();
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(aDialoguePath))
+                {
+                    title = sr.ReadLine();
+                    idTemp = sr.ReadLine();
+
+                    string line;
+
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        lines.Add(line);
+                    }
+                    
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Could not read file");
+                Console.WriteLine(e.Message);
+            }
+            id = int.TryParse(idTemp,out id) ? id : 0;
+            return new Dialogue(title, id, lines);
+        }
+
         public static void PressEnterToContinue()
         {
             Console.Write("Press \'Enter\' to continue");
@@ -219,7 +251,7 @@ namespace ConsoleRPG
         Magic,
         Defend
     }
-
+    
     enum SpellType
     {
         LightningBolt,
@@ -248,5 +280,10 @@ namespace ConsoleRPG
         PortalCast,
         OpenChest,
         GetKey
+    }
+
+    enum Quest
+    {
+
     }
 }
