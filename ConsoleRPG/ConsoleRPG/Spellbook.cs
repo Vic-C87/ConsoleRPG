@@ -23,6 +23,11 @@ namespace ConsoleRPG
             aTarget.TakeDamage(mySpells[aSpellIndex].myDamage);
         }
 
+        public int GetSpellCost(int aSpellIndex)
+        {
+            return mySpells[aSpellIndex].myManaCost;
+        }
+
         public void OpenSpellBook(Vector2 aScreenPositionOffset)
         {
             Vector2 printSpellPosition = aScreenPositionOffset;
@@ -30,7 +35,7 @@ namespace ConsoleRPG
             for (int i = 0; i < mySpells.Count; i++)
             {
                 Utilities.Cursor(printSpellPosition);
-                Console.Write(mySpells[i].mySpellName);
+                Console.Write(mySpells[i].mySpellName + "(" + mySpells[i].myManaCost + "MP)");
                 printSpellPosition = printSpellPosition.Down();
             }
 
@@ -43,7 +48,7 @@ namespace ConsoleRPG
             for (int i = 0; i < mySpells.Count; i++)
             {
                 Utilities.Cursor(printSpellPosition);
-                Console.Write("                   ");
+                Console.Write("                    ");
                 printSpellPosition = printSpellPosition.Down();
             }
         }

@@ -9,9 +9,14 @@ namespace ConsoleRPG
     {
         const int myPlayerBaseHP = 50;
 
+        readonly int myWindowWidth;
+        readonly int myWindowHeight;
+
         bool myGameRunning = true;
 
         bool myBattleMode = false;
+
+        bool myDisplayingStats = false;
 
         bool myMansionAmbiencePlaying = false;
 
@@ -24,9 +29,10 @@ namespace ConsoleRPG
         bool myPickUpText = false;
 
         Player myPlayer;
+        DisplayStats myDisplayStats;
         readonly TownPortal myPortal;
 
-        Vector2 myDrawRoomOffSet = new Vector2(30, 9);
+        Vector2 myDrawRoomOffSet = new Vector2();
         Vector2 myPlayerPositionBeforeBattle = new Vector2();
 
         Dictionary<int, Door> myDoorsByID;
@@ -37,13 +43,20 @@ namespace ConsoleRPG
         readonly BattleManager myBattleManager;
         readonly GameManager myGameManager;
         readonly SpellFactory mySpellFactory;
+        readonly ItemFactory myItemFactory;
 
         char[,] myDoorLockSprite;
 
-        Vector2 myTextFeedBackPosition = new Vector2(34, 5);
+        Vector2 myTextFeedBackPosition = new Vector2();
+
+        Vector2 myBaseRoomSize = new Vector2(105, 25);
+
+        Dialogue testRun;//Debug
 
         public GameManager()
         {
+            myWindowWidth = Console.WindowWidth;
+            myWindowHeight = Console.WindowHeight;
             myDoorsByID = new Dictionary<int, Door>();
             myRoomsByID = new Dictionary<int, Room>();
             myHaveDoors = new Dictionary<DoorDirections, bool>();
@@ -51,15 +64,18 @@ namespace ConsoleRPG
             myBattleManager = new BattleManager();
             myGameManager = this;
             mySpellFactory = new SpellFactory();
+            myItemFactory = new ItemFactory();
             myPortal = new TownPortal();
             SoundManager.LoadSounds();
 
+
+            Console.CursorVisible = false;
             Load();
             EnterRoom(DoorDirections.North);
             
             while(myGameRunning)
             {
-                if (!myBattleMode)
+                if (!myBattleMode && !myDisplayingStats)
                 {
                     GetInput(myPlayer.myGameObject);
                     CheckTrigger(myPlayer.myGameObject);
@@ -69,6 +85,7 @@ namespace ConsoleRPG
 
         void Load()
         {
+            SetVectors();
             RoomFactory roomFactory = new RoomFactory();
             roomFactory.CreateRooms();
             myRoomsByID = roomFactory.GetRooms();
@@ -78,6 +95,7 @@ namespace ConsoleRPG
             myDoorsByID = doorFactory.GetDoors();
             
             myPlayer = new Player(ReadSpriteFromFile(@"Sprites\Man.txt"), myPlayerBaseHP);
+            myDisplayStats = new DisplayStats();
             myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.LightningBolt));
 
             myHaveDoors.Add(DoorDirections.West, false);
@@ -89,8 +107,8 @@ namespace ConsoleRPG
             myDoorTriggerActivated.Add(DoorDirections.North, false);
             myDoorTriggerActivated.Add(DoorDirections.East, false);
             myDoorTriggerActivated.Add(DoorDirections.South, false);
-
-            myDoorLockSprite = Utilities.ReadFromFile(@"Sprites\Lock.txt", out string lockName);
+            myDoorLockSprite = Utilities.ReadFromFile(@"Sprites\Lock.txt", out _);
+            testRun = Utilities.GetDialogue(@"Dialogues\Villager1.txt");
         }
 
         void ResetHasDoors()
@@ -147,70 +165,71 @@ namespace ConsoleRPG
             ResetHasDoors();
             Console.Clear();
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
-            List<DoorDirections> doors = new List<DoorDirections>();
-            if (CheckIfLockedDoors(out doors))
+            PlaceLocks();
+            SetHasDoors();
+            myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
+            DisplayPortal();
+        }
+
+        void DisplayPortal()
+        {
+            if (myPortalPlaced && myPlayer.myCurrentRoom == 0)
+            {
+                myPortal.DrawPortalInTown(new Vector2(myDrawRoomOffSet.X + 1, myDrawRoomOffSet.Y + 6));
+            }
+            if (myPortal.myOriginRoomID == myPlayer.myCurrentRoom && myPortal.myIsPlaced)
+            {
+                myPortal.PlacePortal(myPlayer.myCurrentRoom, new Vector2(myDrawRoomOffSet.X + 77, myDrawRoomOffSet.Y + 2));
+            }
+        }
+
+        void PlaceLocks()
+        {
+            if (CheckIfLockedDoors(out List<DoorDirections> doors))
             {
                 foreach (DoorDirections door in doors)
                 {
                     switch (door)
                     {
                         case DoorDirections.West:
-                            Utilities.CursorPosition(29, 16);
+                            Utilities.CursorPosition(myDrawRoomOffSet.X - 1, myDrawRoomOffSet.Y + 7);
                             Console.Write("    ");
-                            Utilities.CursorPosition(29, 17);
+                            Utilities.CursorPosition(myDrawRoomOffSet.X - 1, myDrawRoomOffSet.Y + 8);
                             Console.Write("    ");
-                            Utilities.CursorPosition(29, 18);
+                            Utilities.CursorPosition(myDrawRoomOffSet.X - 1, myDrawRoomOffSet.Y + 9);
                             Console.Write("     ");
-                            DrawLock(29, 19);
+                            DrawLock(myDrawRoomOffSet.X - 1, myDrawRoomOffSet.Y + 10);
                             break;
                         case DoorDirections.North:
-                            DrawLock(79, 13);
+                            DrawLock(myDrawRoomOffSet.X + 49, myDrawRoomOffSet.Y + 4);
                             break;
                         case DoorDirections.East:
-                            Utilities.CursorPosition(131, 16);
+                            Utilities.CursorPosition(myDrawRoomOffSet.X + 101, myDrawRoomOffSet.Y + 7);
                             Console.Write("    ");
-                            Utilities.CursorPosition(131, 17);
+                            Utilities.CursorPosition(myDrawRoomOffSet.X + 101, myDrawRoomOffSet.Y + 8);
                             Console.Write("    ");
-                            Utilities.CursorPosition(131, 18);
+                            Utilities.CursorPosition(myDrawRoomOffSet.X + 101, myDrawRoomOffSet.Y + 9);
                             Console.Write("    ");
-                            DrawLock(131, 19);
+                            DrawLock(myDrawRoomOffSet.X + 101, myDrawRoomOffSet.Y + 10);
                             break;
                         case DoorDirections.South:
-                            DrawLock(79, 31);
+                            DrawLock(myDrawRoomOffSet.X + 49, myDrawRoomOffSet.Y + 22);
                             break;
                         default:
                             break;
                     }
                 }
             }
-            SetHasDoors();
-            myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
-            if (myPortalPlaced && myPlayer.myCurrentRoom == 0)
-            {
-                myPortal.DrawPortalInTown();
-            }
-            if (myPortal.myOriginRoomID == myPlayer.myCurrentRoom && myPortal.myIsPlaced)
-            {
-                myPortal.PlacePortal(myPlayer.myCurrentRoom);
-            }
         }
 
         void DrawLock(int anXOffSet, int aYOffSet)
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            for (int y = 0; y < myDoorLockSprite.GetLength(1); y++)
-            {
-                for (int x = 0; x < myDoorLockSprite.GetLength(0); x++)
-                {
-                    Utilities.Draw(x + anXOffSet, y + aYOffSet, myDoorLockSprite[x, y]);
-                }
-            }
-            Console.ForegroundColor = ConsoleColor.White;
+            Utilities.DrawSprite(myDoorLockSprite, anXOffSet, aYOffSet, ConsoleColor.DarkRed);
         }
 
         void EnterRoom(Vector2 aPlayerSpawnPosition)
         {
-            if (!myMansionAmbiencePlaying)
+            if (!myMansionAmbiencePlaying && myPlayer.myCurrentRoom != 0)
             {
                 SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myMansionAmbiencePlaying = true;
@@ -218,23 +237,25 @@ namespace ConsoleRPG
             ResetHasDoors();
             Console.Clear();
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
+            PlaceLocks();
             SetHasDoors();
             myPlayer.myGameObject.DrawSprite(aPlayerSpawnPosition);
+            DisplayPortal();
         }
 
-        void CheckTrigger(GameObject aGameObject) //Refactor!!!!! Calculate from roomsize!
+        void CheckTrigger(GameObject aGameObject)
         {
             int xPosition = aGameObject.MyPosition.X;
             int yPosition = aGameObject.MyPosition.Y;
             if (myPlayer.myCurrentRoom == 0)
             {
-                if (xPosition == 127 && (yPosition == 23 || yPosition == 24 || yPosition == 25 || yPosition == 26))
+                if (xPosition == myDrawRoomOffSet.X + 97 && (yPosition == myDrawRoomOffSet.Y + 14 || yPosition == myDrawRoomOffSet.Y + 15 || yPosition == myDrawRoomOffSet.Y + 16 || yPosition == myDrawRoomOffSet.Y + 17))
                 {
                     myDoorTriggerActivated[DoorDirections.East] = true;
                     Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use door");
                 }
-                else if (myPortalPlaced && yPosition == 20 && (xPosition == 32 || xPosition == 33 || xPosition == 34 || xPosition == 35))
+                else if (myPortalPlaced && yPosition == myDrawRoomOffSet.Y + 11 && (xPosition == myDrawRoomOffSet.X + 2 || xPosition == myDrawRoomOffSet.X + 3 || xPosition == myDrawRoomOffSet.X + 4 || xPosition == myDrawRoomOffSet.X + 5))
                 {
                     myPortalTrigger = true;
                     Utilities.Cursor(myTextFeedBackPosition);
@@ -251,37 +272,37 @@ namespace ConsoleRPG
             else
             {
                 //Check west door trigger
-                if (myHaveDoors[DoorDirections.West] && xPosition == 35 && (yPosition == 17 || yPosition == 18 || yPosition == 19))
+                if (myHaveDoors[DoorDirections.West] && xPosition == myDrawRoomOffSet.X + 5 && (yPosition == myDrawRoomOffSet.Y + 8 || yPosition == myDrawRoomOffSet.Y + 9 || yPosition == myDrawRoomOffSet.Y + 10))
                 {
                     myDoorTriggerActivated[DoorDirections.West] = true;
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("Press \'Enter\' to use door");
+                    Console.WriteLine("Press \'Enter\' to use \'" + GetNextRoomName(DoorDirections.West) + "\' door");
                 }//Check north door trigger
-                else if (myHaveDoors[DoorDirections.North] && yPosition == 16 && (xPosition == 78 || xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
+                else if (myHaveDoors[DoorDirections.North] && yPosition == myDrawRoomOffSet.Y + 7 && (xPosition == myDrawRoomOffSet.X + 48 || xPosition == myDrawRoomOffSet.X + 49 || xPosition == myDrawRoomOffSet.X + 50 || xPosition == myDrawRoomOffSet.X + 51 || xPosition == myDrawRoomOffSet.X + 52))
                 {
                     myDoorTriggerActivated[DoorDirections.North] = true;
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("Press \'Enter\' to use door");
+                    Console.WriteLine("Press \'Enter\' to use \'" + GetNextRoomName(DoorDirections.North) + "\' door");
                 }//Check east door trigger
-                else if (myHaveDoors[DoorDirections.East] && xPosition == 127 && (yPosition == 17 || yPosition == 18 || yPosition == 19))
+                else if (myHaveDoors[DoorDirections.East] && xPosition == myDrawRoomOffSet.X + 97 && (yPosition == myDrawRoomOffSet.Y + 8 || yPosition == myDrawRoomOffSet.Y + 9 || yPosition == myDrawRoomOffSet.Y + 10))
                 {
                     myDoorTriggerActivated[DoorDirections.East] = true;
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("Press \'Enter\' to use door");
+                    Console.WriteLine("Press \'Enter\' to use \'" + GetNextRoomName(DoorDirections.East) + "\' door");
                 }//Check south door trigger
-                else if (myHaveDoors[DoorDirections.South] && yPosition == 27 && (xPosition == 79 || xPosition == 80 || xPosition == 81 || xPosition == 82))
+                else if (myHaveDoors[DoorDirections.South] && yPosition == myDrawRoomOffSet.Y + 18 && (xPosition == myDrawRoomOffSet.X + 49 || xPosition == myDrawRoomOffSet.X + 50 || xPosition == myDrawRoomOffSet.X + 51 || xPosition == myDrawRoomOffSet.X + 52))
                 {
                     myDoorTriggerActivated[DoorDirections.South] = true;
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("Press \'Enter\' to use door");
+                    Console.WriteLine("Press \'Enter\' to use \'" + GetNextRoomName(DoorDirections.South) + "\' door");
                 }
-                else if (myPortalPlaced && myPlayer.myCurrentRoom == myPortalRoom && yPosition == 16 && (xPosition == 108 || xPosition == 109 || xPosition == 110 || xPosition == 111))
+                else if (myPortalPlaced && myPlayer.myCurrentRoom == myPortalRoom && yPosition == myDrawRoomOffSet.Y + 7 && (xPosition == myDrawRoomOffSet.X + 78 || xPosition == myDrawRoomOffSet.X + 79 || xPosition == myDrawRoomOffSet.X + 80 || xPosition == myDrawRoomOffSet.X + 81))
                 {
                     myRoomPortalTrigger = true;
                     Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use portal");
                 }
-                else if (CanOpenChest() && yPosition == 16 &&(xPosition == 93 || xPosition == 94 || xPosition == 95 || xPosition == 96))
+                else if (CanOpenChest() && yPosition == myDrawRoomOffSet.Y + 7 && (xPosition == myDrawRoomOffSet.X + 63 || xPosition == myDrawRoomOffSet.X + 64 || xPosition == myDrawRoomOffSet.X + 65 || xPosition == myDrawRoomOffSet.X + 66))
                 {
                     myChestTrigger = true;
                     Utilities.Cursor(myTextFeedBackPosition);
@@ -293,7 +314,7 @@ namespace ConsoleRPG
                     myRoomPortalTrigger = false;
                     myChestTrigger = false;
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.Write("                           ");
+                    Console.Write("                                               ");
                     Utilities.Cursor(myTextFeedBackPosition.Down());
                     Console.Write("                                               ");
                 }
@@ -328,14 +349,11 @@ namespace ConsoleRPG
 
         void TryEnterDoor()
         {
-            int doorID;
-            DoorDirections doorToEnter;
 
-            if (GetTriggeredDoor(out doorID, out doorToEnter))
+            if (GetTriggeredDoor(out int doorID, out DoorDirections doorToEnter))
             {
-                bool doorOpened;
                 int keyToUse = GetKeyForDoor(doorID);
-                myPlayer.myCurrentRoom = myDoorsByID[doorID].UseDoor(myPlayer.myCurrentRoom, out doorOpened, keyToUse);
+                myPlayer.myCurrentRoom = myDoorsByID[doorID].UseDoor(myPlayer.myCurrentRoom, out bool doorOpened, keyToUse);
                 if (doorOpened)
                 {
                     EnterRoom(doorToEnter);
@@ -344,15 +362,11 @@ namespace ConsoleRPG
                 {
                     Utilities.Cursor(myTextFeedBackPosition.Down());
                     Console.Write("Door is ");
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.Write("LOCKED");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Utilities.Color("LOCKED", ConsoleColor.DarkRed);
                     Console.Write(". You need to find the right ");
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.Write("KEY");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Utilities.Color("KEY", ConsoleColor.DarkYellow);
                 }
-            } 
+            }
             if (myPortalTrigger)
             {
                 myPlayer.myCurrentRoom = myPortal.myOriginRoomID;
@@ -369,17 +383,34 @@ namespace ConsoleRPG
             }
             if (myChestTrigger)
             {
-                List<Item> items = new List<Item>();
                 myChestTrigger = false;
                 Utilities.Cursor(myTextFeedBackPosition);
                 Console.Write("                           ");
-                items = myRoomsByID[myPlayer.myCurrentRoom].myChest.OpenChest();
-                if(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
+                bool hasItem = myItemFactory.GetItem(myRoomsByID[myPlayer.myCurrentRoom].myChest.OpenChest(), out Item item);
+                if (myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
                 {
                     myPlayer.myKeyIDs.Add(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID);
-                    DisplayPickUpText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID);
+                     //Edit!
+                }
+                DisplayPickUpText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID, hasItem ? item.myTitle : null);                
+                myPlayer.PickUpItem(item.myStat);
+                if (item.myItemID == 11)
+                {
+                    myPlayer.myCurrentHP = myPlayer.myBaseHP;
+                }
+                else if (item.myItemID == 12)
+                {
+                    myPlayer.myCurrentMP = myPlayer.myMaxMP;
                 }
             }
+        }
+
+        string GetNextRoomName(DoorDirections aDirection)
+        {
+            int doorToCheck = myRoomsByID[myPlayer.myCurrentRoom].GetDoorFromDirection(aDirection);
+            int nextRoomID = myDoorsByID[doorToCheck].GetNextRoomID(myPlayer.myCurrentRoom);
+            string roomName = myRoomsByID[nextRoomID].myTitle;
+            return roomName;
         }
 
         bool GetTriggeredDoor(out int aDoorID, out DoorDirections aDoorDirection)
@@ -460,7 +491,7 @@ namespace ConsoleRPG
             {
                 SoundManager.PlaySound(SoundType.PortalCast);
                 Thread.Sleep(2000);
-                myPortal.PlacePortal(myPlayer.myCurrentRoom);
+                myPortal.PlacePortal(myPlayer.myCurrentRoom, new Vector2(myDrawRoomOffSet.X + 77, myDrawRoomOffSet.Y + 2));
                 SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myPortalPlaced = true;
                 myPortalRoom = myPlayer.myCurrentRoom;
@@ -469,17 +500,25 @@ namespace ConsoleRPG
             {
                 StartBattle();
             }
+            else if (input.Key == ConsoleKey.Tab)
+            {
+                myDisplayingStats = true;
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myDisplayStats.ShowStats(myPlayer);
+                EnterRoom(myPlayerPositionBeforeBattle);
+                myDisplayingStats = false;
+            }
         }
 
-        static Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)  //Refactor! Calculate from roomsize!
+        Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)  //Refactor! Calculate from roomsize!
         {
             return anEntryPoint switch
             {
-                DoorDirections.West => new Vector2(126, 17),
-                DoorDirections.North => new Vector2(81, 25),
-                DoorDirections.East => new Vector2(36, 17),
-                DoorDirections.South => new Vector2(81, 17),
-                _ => new Vector2(81, 25),
+                DoorDirections.West => new Vector2(myDrawRoomOffSet.X + 96, myDrawRoomOffSet.Y + 8),
+                DoorDirections.North => new Vector2(myDrawRoomOffSet.X + 51, myDrawRoomOffSet.Y + 16),
+                DoorDirections.East => new Vector2(myDrawRoomOffSet.X + 6, myDrawRoomOffSet.Y + 8),
+                DoorDirections.South => new Vector2(myDrawRoomOffSet.X + 51, myDrawRoomOffSet.Y + 8),
+                _ => new Vector2(myDrawRoomOffSet.X + 51, myDrawRoomOffSet.Y + 16),
             };
         }
 
@@ -490,8 +529,7 @@ namespace ConsoleRPG
         /// <returns></returns>
         static GameObject ReadSpriteFromFile(string aFilePath)
         {
-            string title;
-            char[,] sprite = Utilities.ReadFromFile(aFilePath, out title);
+            char[,] sprite = Utilities.ReadFromFile(aFilePath, out string title);
             GameObject gameObject = new GameObject(new Vector2(sprite.GetLength(0), sprite.GetLength(1)), title, sprite);
             return gameObject;
         }
@@ -517,13 +555,24 @@ namespace ConsoleRPG
             EnterRoom(myPlayerPositionBeforeBattle);
         }
 
-        void DisplayPickUpText(int aKeyID)//Change to itemID when inventory is implemented
+        void DisplayPickUpText(int aKeyID, string anItemTitle)//Change to itemID when inventory is implemented
         {
             myPickUpText = true;
-            Utilities.CursorPosition(82, 6);
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.Write("You've picked up: " + KeyIDToText(aKeyID));
-            Console.ForegroundColor = ConsoleColor.White;
+            Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 3);
+            if (aKeyID != 0)
+            {
+                Utilities.Color("You've picked up: " + KeyIDToText(aKeyID), ConsoleColor.DarkYellow);
+                Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 2);
+                if (anItemTitle != null)
+                {
+                    Utilities.Color("You've picked up: " + anItemTitle, ConsoleColor.Blue);
+                }
+            }
+            else
+            {
+                Utilities.Color("You've picked up: " + anItemTitle, ConsoleColor.Blue);
+            }
+            //Add display item name pickup text
         }
 
         void HidePickUpText()
@@ -531,7 +580,12 @@ namespace ConsoleRPG
             if (myPickUpText)
             {
                 myPickUpText = false;
-                Utilities.CursorPosition(82, 6);
+                Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 3);
+                for (int i = 0; i < 34; i++)
+                {
+                    Console.Write(" ");
+                }
+                Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 2);
                 for (int i = 0; i < 34; i++)
                 {
                     Console.Write(" ");
@@ -543,13 +597,24 @@ namespace ConsoleRPG
         {
             string keyName = aKeyID switch
             {
-                1 => "West-wing key",
-                2 => "East-wing key",
+                1 => "Bedroom key",
+                2 => "Diningroom key",
                 3 => "Library key",
-                4 => "Master suite key",
+                4 => "Office key",
                 _ => " ",
             };
             return keyName;
+        }
+
+        void SetVectors()
+        {
+            //X pos
+            int x = (myWindowWidth / 2) - (myBaseRoomSize.X / 2);
+            //Y pos
+            int y = (myWindowHeight / 2) - (myBaseRoomSize.Y / 2);
+            myDrawRoomOffSet = new Vector2(x, y);
+
+            myTextFeedBackPosition = new Vector2(myDrawRoomOffSet.X + 4, myDrawRoomOffSet.Y - 4);
         }
     }
 }

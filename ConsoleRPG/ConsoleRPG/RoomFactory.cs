@@ -30,6 +30,7 @@ namespace ConsoleRPG
 					new List<int>(),
 					rootRoomPath + "Foyer.txt",
 					true);
+			newRoom.AddItemToChest(UpgradeType.SwordUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Greathall", "a large hall with high ceilling",
@@ -46,23 +47,24 @@ namespace ConsoleRPG
 					rootRoomPath + "CloakRoom.txt",
 					true);//Key to door 5
 			newRoom.AddKeyToChest(1);
+			newRoom.AddItemToChest(UpgradeType.HealthUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Hallway A", "a hall",
+			newRoom = new Room("Main Hallway", "a hall",
 					4, false,
 					new Dictionary<int, DoorDirections>() { { 3, DoorDirections.East }, { 4, DoorDirections.West }, { 12, DoorDirections.North } },
 						   new List<int>(),
 						   rootRoomPath + "HallwayA.txt");
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Hallway B", "a hallway",
+			newRoom = new Room("Hallway", "a hallway",
 					5, false,
 					new Dictionary<int, DoorDirections>() { { 4, DoorDirections.East }, { 5, DoorDirections.West } },
 						   new List<int>(),
 						   rootRoomPath + "HallwayB.txt"); //Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
-			newRoom = new Room("Large bedroom", "a grand bedroom",
+			newRoom = new Room("Bedroom", "a grand bedroom",
 					6, false,
 					new Dictionary<int, DoorDirections>() { { 5, DoorDirections.East }, { 6, DoorDirections.South } },
 						   new List<int>(),

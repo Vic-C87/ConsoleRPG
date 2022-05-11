@@ -1,18 +1,26 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace ConsoleRPG
 {
     class Program
     {
-        const int WINDOW_WIDTH = 170;
-        const int WINDOW_HEIGHT = 44;
-
         [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Console.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-            //Set buffert
+
+            int largestWindowX = Console.WindowWidth;
+            int largestWindowY = Console.WindowHeight;
+
+            Console.BufferWidth = Console.WindowWidth = largestWindowX;
+            Console.BufferHeight = Console.WindowHeight = largestWindowY;
+
+            InputSimulator inputSimulator = new InputSimulator();
+            inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
+
             Console.CursorVisible = false;
             Console.SetCursorPosition(0, 0);
 

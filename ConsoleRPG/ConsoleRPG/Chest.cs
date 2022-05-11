@@ -8,7 +8,7 @@ namespace ConsoleRPG
 {
     internal class Chest
     {
-        public List<Item> myItems;
+        public UpgradeType myItem;
         public int myKeyID;
         readonly char[,] mySprite;
         public bool myIsOpened;
@@ -16,9 +16,9 @@ namespace ConsoleRPG
 
         public Chest()
         {
-            myItems = new List<Item>();
+            myItem = UpgradeType.Null;
             myKeyID = 0;
-            mySprite = Utilities.ReadFromFile(@"Sprites\Chest.txt", out string aTitle);
+            mySprite = Utilities.ReadFromFile(@"Sprites\Chest.txt", out _);
             myIsOpened = false;
             myOffSet = new Vector2();
         }
@@ -28,21 +28,18 @@ namespace ConsoleRPG
             myKeyID = aKeyID;
         }
 
+        public void AddItem(UpgradeType aType)
+        {
+            myItem = aType;
+        }
+
         public void DrawChest(Vector2 anOffSet)
         {
             myOffSet = anOffSet;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            for (int y = 0; y < mySprite.GetLength(1); y++)
-            {
-                for (int x = 0; x < mySprite.GetLength(0); x++)
-                {
-                    Utilities.Draw(x + myOffSet.X, y + myOffSet.Y, mySprite[x, y]);
-                }
-            }
-            Console.ForegroundColor = ConsoleColor.White;
+            Utilities.DrawSprite(mySprite, anOffSet, ConsoleColor.Yellow);
         }
 
-        public List<Item> OpenChest()
+        public UpgradeType OpenChest()
         {
             myIsOpened = true;
             SoundManager.PlaySound(SoundType.OpenChest, false, true);
@@ -62,7 +59,7 @@ namespace ConsoleRPG
             }
             SoundManager.PlaySound(SoundType.MansionAmbience, true);
 
-            return myItems;
+            return myItem;
         }
 
     }

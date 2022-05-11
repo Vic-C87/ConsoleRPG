@@ -8,14 +8,16 @@ namespace ConsoleRPG
         public SoundType mySpellSound;
         //public int mySpellID;
         public int myDamage;
+        public int myManaCost;
         //public char[,] myCastSprite;
 
-        public Spell(string aSpellName, SpellType aSpellType, SoundType aSoundType,int someDamage)
+        public Spell(string aSpellName, SpellType aSpellType, SoundType aSoundType, int someDamage, int aManaCost)
         {
             mySpellName = aSpellName;
             mySpellType = aSpellType;
             mySpellSound = aSoundType;
             myDamage = someDamage;
+            myManaCost = aManaCost;
         }
     }
 }

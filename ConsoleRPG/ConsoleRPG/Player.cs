@@ -7,12 +7,17 @@ namespace ConsoleRPG
         public int myCurrentRoom;
         public int myBaseHP;
         public int myCurrentHP;
+        public int myMaxMP;
+        public int myCurrentMP;
         public int myBaseDamage;
+        public int myArmor;
         public int myCoolDown;
+
+        public Stat myStat;
 
         public Actors myType;
 
-        public GameObject myGameObject { get; }
+        public GameObject myGameObject;
 
         public Spellbook mySpellbook;
 
@@ -22,13 +27,32 @@ namespace ConsoleRPG
         {
             myGameObject = aGameObject;
             myCurrentRoom = 0;
-            myBaseHP = aBaseHP;
+            myStat = new Stat(0, aBaseHP, 15, 3, 1);
+            myBaseHP = myStat.myHP;
             myCurrentHP = myBaseHP;
-            myBaseDamage = 3;
+            myMaxMP = myStat.myMP;
+            myCurrentMP = myMaxMP;
+            myBaseDamage = myStat.myDamage;
+            myArmor = myStat.myArmor;
             myCoolDown = 3000;
             myType = Actors.Player;
             mySpellbook = new Spellbook();
             myKeyIDs = new List<int>();
+        }
+
+        public void PickUpItem(Stat aStat)
+        {
+            if (aStat == null) return;
+            myStat.Add(aStat);
+            AddStats(aStat);
+        }
+
+        void AddStats(Stat aStat)
+        {
+            myBaseHP += aStat.myHP;
+            myMaxMP += aStat.myMP;
+            myBaseDamage += aStat.myDamage;
+            myArmor += aStat.myArmor;
         }
     }
 }

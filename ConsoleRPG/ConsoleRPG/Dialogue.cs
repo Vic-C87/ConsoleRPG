@@ -9,14 +9,19 @@ namespace ConsoleRPG
     internal class Dialogue
     {
         public string myTitle;
-        public int myDialogueID;
-        List<string> myDialogue = new List<string>();
+        public int myDialogueID;        
+        public bool myNPCStart;
 
-        public Dialogue(string aTitle, int anID, List<string> aDialogueList)
+        public Dictionary<int, string> myNPCLines = new Dictionary<int, string>();
+        public Dictionary<int, string> myPlayerLines = new Dictionary<int, string>();
+
+        public Dialogue(string aTitle, int anID, Dictionary<int, string> aNPCDialogue, Dictionary<int, string> aPlayerDialogue, bool aNPCStart)
         {
             myTitle = aTitle;
             myDialogueID = anID;
-            myDialogue = aDialogueList;
+            myNPCLines = aNPCDialogue;
+            myPlayerLines = aPlayerDialogue;
+            myNPCStart = aNPCStart;
         }
 
     }

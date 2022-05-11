@@ -55,12 +55,12 @@ namespace ConsoleRPG
             {
                 GroupCollection data = match.Groups;
 
-                int.TryParse(data[1].Value, out numberOfRolls);
-                int.TryParse(data[2].Value, out facesOnDice);
-                int.TryParse(data[5].Value, out followNumber);
+                _ = int.TryParse(data[1].Value, out numberOfRolls);
+                _ = int.TryParse(data[2].Value, out facesOnDice);
+                _ = int.TryParse(data[5].Value, out followNumber);
                 if (data[4].Value == "-")
                 {
-                    followNumber = followNumber - (2 * followNumber);
+                    followNumber -= (2 * followNumber);
                 }
             }
             if (numberOfRolls == 0)
@@ -191,24 +191,26 @@ namespace ConsoleRPG
         static public Dialogue GetDialogue(string aDialoguePath)
         {
             string title = "";
-            string idTemp = "0";
-            int id;
+            int id = 0;
             List<string> lines = new List<string>();
+            Dictionary<int, string> playerLines = new Dictionary<int, string>();
+            Dictionary<int, string> nPCLines = new Dictionary<int, string>();
+            bool nPCStart;
 
             try
             {
                 using (StreamReader sr = new StreamReader(aDialoguePath))
                 {
                     title = sr.ReadLine();
-                    idTemp = sr.ReadLine();
+                    _ = int.TryParse(sr.ReadLine(), out id);
+                    
 
                     string line;
 
                     while ((line = sr.ReadLine()) != null)
                     {
                         lines.Add(line);
-                    }
-                    
+                    }                   
                 }
             }
             catch (Exception e)
@@ -216,8 +218,41 @@ namespace ConsoleRPG
                 Console.WriteLine("Could not read file");
                 Console.WriteLine(e.Message);
             }
-            id = int.TryParse(idTemp,out id) ? id : 0;
-            return new Dialogue(title, id, lines);
+
+            int lineCount;
+
+            if (lines[0].Contains('#'))
+            {
+                nPCStart = false;
+            }
+            else
+            {
+                nPCStart = true;
+            }
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].Contains('#'))
+                {
+                    string[] splitPlayerLine = lines[i].Split('#');
+                    string line = GetLine(splitPlayerLine[1], out lineCount);
+                    playerLines.Add(lineCount, line);
+                }
+                else
+                {
+                    string line = GetLine(lines[i], out lineCount);
+                    nPCLines.Add(lineCount, line);
+                }
+            }
+
+            return new Dialogue(title, id, nPCLines, playerLines, nPCStart);
+        }
+
+        static string GetLine(string aLineToSplit, out int aLineCount)
+        {
+            string[] splitLine = aLineToSplit.Split('*');
+            _ = int.TryParse(splitLine[0], out aLineCount);
+            return splitLine[1];
         }
 
         public static void PressEnterToContinue()
@@ -226,6 +261,38 @@ namespace ConsoleRPG
             Console.ReadLine();
         }
 
+        public static void Color(string atext, ConsoleColor aColor)
+        {
+            Console.ForegroundColor = aColor;
+            Console.Write(atext);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void DrawSprite(char[,] aSprite, int anXOffSet, int aYOffSet, ConsoleColor aColor = ConsoleColor.White)
+        {
+            Console.ForegroundColor = aColor;
+            for (int y = 0; y < aSprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < aSprite.GetLength(0); x++)
+                {
+                    Draw(x + anXOffSet, y + aYOffSet, aSprite[x, y]);
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void DrawSprite(char[,] aSprite, Vector2 anOffSet, ConsoleColor aColor = ConsoleColor.White)
+        {
+            Console.ForegroundColor = aColor;
+            for (int y = 0; y < aSprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < aSprite.GetLength(0); x++)
+                {
+                    Draw(x + anOffSet.X, y + anOffSet.Y, aSprite[x, y]);
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
     }
 
     enum DoorDirections
@@ -280,6 +347,17 @@ namespace ConsoleRPG
         PortalCast,
         OpenChest,
         GetKey
+    }
+
+    enum UpgradeType
+    {
+        Null,
+        SwordUpgrade,
+        ArmorUpgrade,
+        HealthUpgrade,
+        ManaUpgrade,
+        FireSpell,
+        FullUpgrade
     }
 
     enum Quest

@@ -11,8 +11,14 @@ namespace ConsoleRPG
         public int myHP;
 
         public int myMaxHP;
+
+        public int myMP = 0;
+
+        public int myMaxMP = 0;
         
         public int myDamage;
+
+        public int myArmor = 0;
 
         public int myCoolDown;
 
@@ -56,7 +62,7 @@ namespace ConsoleRPG
             myName = aPlayer.myGameObject.MyTitle;
             myHP = aPlayer.myCurrentHP;
             myMaxHP = aPlayer.myBaseHP;
-            myDamage = aPlayer.myBaseDamage;
+            myDamage = aPlayer.myStat.myDamage;
             myIsPlayer = true;
             myCoolDown = aPlayer.myCoolDown;
             myBattleID = 0;
@@ -66,6 +72,9 @@ namespace ConsoleRPG
             mySpellbook = aPlayer.mySpellbook;
             myBattlePosition = new Vector2();
             myBattleNameOnScreenPosition = new Vector2();
+            myMaxMP = aPlayer.myStat.myMP;
+            myMP = aPlayer.myCurrentMP;
+            myArmor = aPlayer.myStat.myArmor;
         }
 
 
@@ -84,7 +93,14 @@ namespace ConsoleRPG
 
         public void TakeDamage(int someDamage)
         {
-            myHP -= someDamage;
+            if (myIsPlayer)
+            {
+                myHP -= (someDamage - myArmor);
+            }
+            else
+            {
+                myHP -= someDamage;
+            }
             if (myHP <= 0)
             {
                 myHP = 0;
@@ -114,13 +130,7 @@ namespace ConsoleRPG
 
         public void DrawSprite(Vector2 anOffSet)
         {
-            for (int y = 0; y < mySprite.GetLength(1); y++)
-            {
-                for (int x = 0; x < mySprite.GetLength(0); x++)
-                {
-                    Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, mySprite[x, y]);
-                }
-            }
+            Utilities.DrawSprite(mySprite, anOffSet);
             myBattlePosition = anOffSet;
         }
 

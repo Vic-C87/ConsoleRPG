@@ -11,5 +11,6 @@ namespace ConsoleRPG
         public string myName;
 
         Dictionary<Quest, Dialogue> myInteractions;
+        
     }
 }

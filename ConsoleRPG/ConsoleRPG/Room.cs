@@ -21,7 +21,6 @@ namespace ConsoleRPG
 		public bool myPortalPlaced;
 
 		public Chest myChest;
-		Vector2 myChestPosition = new Vector2(92, 13);
 		public bool myHaveChest;
 
 		public Room()
@@ -47,7 +46,7 @@ namespace ConsoleRPG
 			myVisited = aVisited;
 			myDoorIDs = someDoorIDs;
 			myLootableIDs = someLootableIDs;
-			myRoomMap = Utilities.ReadFromFile(aRoomPath, out string mapTitle);
+			myRoomMap = Utilities.ReadFromFile(aRoomPath, out myTitle);
 			myHaveChest = aHaveChest;
 			myNorthBound = aNorthBound;
 			mySouthBound = aSouthBound;
@@ -65,25 +64,36 @@ namespace ConsoleRPG
 			myChest.AddKey(aKeyID);
         }
 
+		public void AddItemToChest(UpgradeType aType)
+        {
+			myChest.AddItem(aType);
+        }
+
 		public void DrawRoom(Vector2 anOffSet)
         {
-			for (int y = 0; y < myRoomMap.GetLength(1); y++)
-			{
-				for (int x = 0; x < myRoomMap.GetLength(0); x++)
-				{
-					Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, myRoomMap[x, y]);
-				}
-				Console.WriteLine();
-			}
+			Utilities.DrawSprite(myRoomMap, anOffSet);
 			
 			if (myHaveChest && myChest != null)
             {
 				if (!myChest.myIsOpened)
                 {
-					myChest.DrawChest(myChestPosition);
+					myChest.DrawChest(new Vector2(anOffSet.X + 62, anOffSet.Y + 4));
                 }
             }
 		}
+
+		public int GetDoorFromDirection(DoorDirections aDirection)
+        {
+			int doorID = 0;
+            foreach (KeyValuePair<int, DoorDirections> door in myDoorIDs)
+            {
+				if (door.Value == aDirection)
+                {
+					doorID = door.Key;
+                }
+            }
+			return doorID;
+        }
 	}
 
 }

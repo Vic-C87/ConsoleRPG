@@ -45,14 +45,7 @@ namespace ConsoleRPG
 				{
 					myLocked = false;
 					unlocked = true;
-					if (aCurrentRoomID == myRoomOneID)
-					{
-						return myRoomTwoID;
-					}
-					else
-					{
-						return myRoomOneID;
-					}
+					return GetNextRoomID(aCurrentRoomID);
 				}
 				else
 				{
@@ -63,14 +56,7 @@ namespace ConsoleRPG
 			else
 			{
 				unlocked = true;
-				if (aCurrentRoomID == myRoomOneID)
-				{
-					return myRoomTwoID;
-				}
-				else
-				{
-					return myRoomOneID;
-				}
+				return GetNextRoomID(aCurrentRoomID);
 			}
 		}
 
@@ -84,5 +70,10 @@ namespace ConsoleRPG
 			}
 			return false;
 		}
+
+		public int GetNextRoomID(int aCurrentRoomID)
+        {
+			return (aCurrentRoomID == myRoomOneID) ? myRoomTwoID : myRoomOneID;
+        }
 	}
 }
