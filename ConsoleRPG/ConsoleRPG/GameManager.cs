@@ -51,7 +51,9 @@ namespace ConsoleRPG
 
         Vector2 myBaseRoomSize = new Vector2(105, 25);
 
-        Dialogue testRun;//Debug
+        Tavern myTavern;
+
+        
 
         public GameManager()
         {
@@ -66,6 +68,7 @@ namespace ConsoleRPG
             mySpellFactory = new SpellFactory();
             myItemFactory = new ItemFactory();
             myPortal = new TownPortal();
+            myTavern = new Tavern();
             SoundManager.LoadSounds();
 
 
@@ -97,6 +100,7 @@ namespace ConsoleRPG
             myPlayer = new Player(ReadSpriteFromFile(@"Sprites\Man.txt"), myPlayerBaseHP);
             myDisplayStats = new DisplayStats();
             myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.LightningBolt));
+            myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.Fireball));
 
             myHaveDoors.Add(DoorDirections.West, false);
             myHaveDoors.Add(DoorDirections.North, false);
@@ -108,7 +112,7 @@ namespace ConsoleRPG
             myDoorTriggerActivated.Add(DoorDirections.East, false);
             myDoorTriggerActivated.Add(DoorDirections.South, false);
             myDoorLockSprite = Utilities.ReadFromFile(@"Sprites\Lock.txt", out _);
-            testRun = Utilities.GetDialogue(@"Dialogues\Villager1.txt");
+            
         }
 
         void ResetHasDoors()
@@ -337,14 +341,13 @@ namespace ConsoleRPG
         {
             int keyNeeded = myDoorsByID[aDoorID].myKeyID;
 
-            for (int i = 0; i < myPlayer.myKeyIDs.Count; i++)
+            if (myPlayer.myKeyIDs.ContainsKey(keyNeeded))
             {
-                if (keyNeeded == myPlayer.myKeyIDs[i])
-                {
-                    return myPlayer.myKeyIDs[i];
-                }
+                myPlayer.myKeyIDs.Remove(keyNeeded);
+                return keyNeeded;
             }
             return 0;
+
         }
 
         void TryEnterDoor()
@@ -389,8 +392,7 @@ namespace ConsoleRPG
                 bool hasItem = myItemFactory.GetItem(myRoomsByID[myPlayer.myCurrentRoom].myChest.OpenChest(), out Item item);
                 if (myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
                 {
-                    myPlayer.myKeyIDs.Add(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID);
-                     //Edit!
+                    myPlayer.myKeyIDs.Add(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID, KeyIDToText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID));
                 }
                 DisplayPickUpText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID, hasItem ? item.myTitle : null);                
                 myPlayer.PickUpItem(item.myStat);
@@ -495,11 +497,7 @@ namespace ConsoleRPG
                 SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myPortalPlaced = true;
                 myPortalRoom = myPlayer.myCurrentRoom;
-            }
-            else if (input.Key == ConsoleKey.F2)//Debug
-            {
-                StartBattle();
-            }
+            }           
             else if (input.Key == ConsoleKey.Tab)
             {
                 myDisplayingStats = true;
@@ -508,9 +506,19 @@ namespace ConsoleRPG
                 EnterRoom(myPlayerPositionBeforeBattle);
                 myDisplayingStats = false;
             }
+            else if (input.Key == ConsoleKey.F2)//Debug
+            {
+                StartBattle();
+            }
+            else if (input.Key == ConsoleKey.Spacebar)
+            {
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myTavern.EnterTavern();
+                EnterRoom(myPlayerPositionBeforeBattle);
+            }
         }
 
-        Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)  //Refactor! Calculate from roomsize!
+        Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)
         {
             return anEntryPoint switch
             {
@@ -536,13 +544,17 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 3, 2, 5000);//DEbug
-            Actor dragon = new Actor(Actors.Dragon, @"Sprites\Dragon.txt", 3, 2, 7000);
-            Actor bat2 = new Actor(Actors.Bat, @"Sprites\Bat.txt", 3, 2, 5000);
-            List<Actor> testBattleEnemies = new List<Actor>();//Debug
-            testBattleEnemies.Add(bat); //Debug
-            testBattleEnemies.Add(dragon);
-            testBattleEnemies.Add(bat2);
+            //DEBUG
+            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 10, 2, 5000);
+            bat.AddHitSprite(@"Sprites\BatDown.txt");
+            Actor dracula = new Actor(Actors.Dragon, @"Sprites\Dracula.txt", 15, 2, 7000);
+            
+            Actor spider = new Actor(Actors.Bat, @"Sprites\Spider.txt", 10, 2, 5000);
+            spider.AddHitSprite(@"Sprites\SpiderHit.txt");
+            List<Actor> testBattleEnemies = new List<Actor>() { bat, dracula, spider};
+            //DEBUG
+
+            //Get random enemy list!!!
             myBattleMode = true;
             myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
             myMansionAmbiencePlaying = false;
@@ -555,7 +567,7 @@ namespace ConsoleRPG
             EnterRoom(myPlayerPositionBeforeBattle);
         }
 
-        void DisplayPickUpText(int aKeyID, string anItemTitle)//Change to itemID when inventory is implemented
+        void DisplayPickUpText(int aKeyID, string anItemTitle)
         {
             myPickUpText = true;
             Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 3);
@@ -570,9 +582,11 @@ namespace ConsoleRPG
             }
             else
             {
-                Utilities.Color("You've picked up: " + anItemTitle, ConsoleColor.Blue);
+                if (anItemTitle != null)
+                {
+                    Utilities.Color("You've picked up: " + anItemTitle, ConsoleColor.Blue);
+                }
             }
-            //Add display item name pickup text
         }
 
         void HidePickUpText()

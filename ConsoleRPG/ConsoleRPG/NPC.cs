@@ -9,8 +9,21 @@ namespace ConsoleRPG
     internal class NPC
     {
         public string myName;
+        readonly Dictionary<Quest, Dialogue> myInteractions = new Dictionary<Quest, Dialogue>();
 
-        Dictionary<Quest, Dialogue> myInteractions;
-        
+        public NPC(string aName, string aDialoguePath)
+        {
+            myName = aName;
+            myInteractions.Add(Quest.EnterTavern, Utilities.GetDialogue(aDialoguePath));            
+        }
+
+        public Dialogue GetDialogue(Quest aQuest)
+        {
+            if (myInteractions.ContainsKey(aQuest))
+            {
+                return myInteractions[aQuest];
+            }
+            return null;
+        }
     }
 }

@@ -362,6 +362,6 @@ namespace ConsoleRPG
 
     enum Quest
     {
-
+        EnterTavern
     }
 }

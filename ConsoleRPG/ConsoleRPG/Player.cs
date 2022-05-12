@@ -21,7 +21,7 @@ namespace ConsoleRPG
 
         public Spellbook mySpellbook;
 
-        public List<int> myKeyIDs;
+        public Dictionary<int, string> myKeyIDs;
 
         public Player(GameObject aGameObject, int aBaseHP)
         {
@@ -37,7 +37,7 @@ namespace ConsoleRPG
             myCoolDown = 3000;
             myType = Actors.Player;
             mySpellbook = new Spellbook();
-            myKeyIDs = new List<int>();
+            myKeyIDs = new Dictionary<int, string>();
         }
 
         public void PickUpItem(Stat aStat)

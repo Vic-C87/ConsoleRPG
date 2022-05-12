@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace ConsoleRPG
 {
@@ -31,6 +32,8 @@ namespace ConsoleRPG
         public bool myIsAlive;
 
         public char[,] mySprite;
+
+        public char[,] myHitSprite = null;
 
         public Spellbook mySpellbook;
 
@@ -77,6 +80,11 @@ namespace ConsoleRPG
             myArmor = aPlayer.myStat.myArmor;
         }
 
+        public void AddHitSprite(string aPath)
+        {
+            myHitSprite = Utilities.ReadFromFile(aPath, out _);
+        }
+
 
         public int Attack()
         {
@@ -86,7 +94,7 @@ namespace ConsoleRPG
             }
             else
             {
-                SoundManager.PlaySound(SoundType.PlayerHurt);
+                SoundManager.PlaySound(SoundType.PlayerHurt, false, true);
             }
             return myDamage;
         }
@@ -100,6 +108,8 @@ namespace ConsoleRPG
             else
             {
                 myHP -= someDamage;
+                AnimateHurt();
+
             }
             if (myHP <= 0)
             {
@@ -142,6 +152,18 @@ namespace ConsoleRPG
                 {
                     Utilities.Draw(x + anOffSet.X, y + anOffSet.Y, ' ');
                 }
+            }
+        }
+
+        void AnimateHurt()
+        {
+            if (myHitSprite != null)
+            {
+                ClearSprite(myBattlePosition);
+                Utilities.DrawSprite(myHitSprite, myBattlePosition);
+                Thread.Sleep(300);
+                ClearSprite(myBattlePosition);
+                Utilities.DrawSprite(mySprite, myBattlePosition);
             }
         }
         

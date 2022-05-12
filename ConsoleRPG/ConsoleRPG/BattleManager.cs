@@ -26,6 +26,8 @@ namespace ConsoleRPG
         readonly Vector2[] myEnemySpritePositions = new Vector2[3] { new Vector2(60, 9), new Vector2(90, 9), new Vector2(120, 9) };
         readonly Vector2 myPlayerSpritePosition = new Vector2(103, 28);
 
+        readonly Vector2 myFeedbackText = new Vector2(60, Console.WindowHeight / 3);
+
         readonly Vector2[] myEnemySelectorPositons = new Vector2[3] { new Vector2(13, 12), new Vector2(13, 14), new Vector2(13, 16) };
         Vector2 myEnemyNameOnScreenPosition = new Vector2(14, 12); //Increment by Vector2.Down() x2 foreach
 
@@ -195,7 +197,6 @@ namespace ConsoleRPG
             Utilities.Cursor(myActionSelectorPositions[0]);
             Console.Write(mySelectorRight);
             int selectIndex = 0;
-            int spellCost = 0;
             bool goBack = false;
             while (mySelectAction)
             {
@@ -212,7 +213,6 @@ namespace ConsoleRPG
                 {
                     GetSelectionInput(myEnemySelectorPositons, 3, FrameType.EnemyNameFrame,ref selectIndex, ref mySelectEnemy, out _);
                 }
-
             }
             if (actionSelected == Actions.Attack)
             {
@@ -230,17 +230,19 @@ namespace ConsoleRPG
                 while (mySelectSpell)
                 {
                     GetSelectionInput(mySpellSelectorPositions, myPlayer.mySpellbook.GetSpellCount(), FrameType.SpellFrame,ref selectIndex, ref mySelectSpell, out goBack);
+
                 }
                 int spellIndexToCast = selectIndex;
+                int spellCost = myPlayer.mySpellbook.GetSpellCost(spellIndexToCast);
                 mySelectEnemy = true;
                 selectIndex = 0;
                 Utilities.Cursor(myEnemySelectorPositons[0]);
                 Console.Write(mySelectorRight);
-                while (mySelectEnemy && !goBack)
+                while (mySelectEnemy && !goBack && spellCost <= myPlayer.myMP)
                 {
                     GetSelectionInput(myEnemySelectorPositons, 3, FrameType.EnemyNameFrame,ref selectIndex, ref mySelectEnemy, out _);
                 }
-                spellCost = myPlayer.mySpellbook.GetSpellCost(spellIndexToCast);
+                
                 if (myPlayer.myMP >= spellCost && !goBack)
                 {
                     myPlayer.mySpellbook.UseSpell(spellIndexToCast, myEnemies[selectIndex]);
@@ -251,32 +253,33 @@ namespace ConsoleRPG
                 }
                 else
                 {
-                    //Print: NOT enough mana! Try again
-                    UpdateHPDisplayed(myEnemies[selectIndex]);
+                    Utilities.Cursor(myFeedbackText);
+                    Utilities.Color("Not enough MANA", ConsoleColor.Blue);
+                    Thread.Sleep(1000);
+                    Utilities.Cursor(myFeedbackText);
+                    Console.Write("               ");
                     myPlayer.mySpellbook.CloseSpellbook(mySpellNamePosition);
                     mySelectAction = true;
                     Utilities.Cursor(myEnemySelectorPositons[0]);
                     Console.Write(" ");
                     SelectAction();
-                }
-                
+                }                
             }
             else if (actionSelected == Actions.Defend)
             {
                 myPlayer.Heal(5);
                 UpdateHPDisplayed(myPlayer);
-            }
-            
+            }           
         }
 
         void GetSelectionInput(Vector2[] someOptionPositions, int aMenuOptionsCount, FrameType aFrameType,ref int aSelectIndex, ref bool aSelectTypeBool, out bool aGoBackOption)
         {
             ConsoleKeyInfo selection;
+            
             while (Console.KeyAvailable)
                 Console.ReadKey(false);
 
             selection = Console.ReadKey(true);
-
 
             aGoBackOption = false;
             if (selection.Key == ConsoleKey.UpArrow)
@@ -301,8 +304,7 @@ namespace ConsoleRPG
                     aSelectIndex = 0;
                 }
                 Utilities.Cursor(someOptionPositions[aSelectIndex]);
-                Console.Write(mySelectorRight);
-                
+                Console.Write(mySelectorRight);                
             }
             else if (selection.Key == ConsoleKey.Enter)
             {
@@ -333,8 +335,7 @@ namespace ConsoleRPG
             if (!CheckAlive())
             {
                 aSelectTypeBool = false;
-            }
-            
+            }            
         }
 
         void SetTurnList()
@@ -354,7 +355,7 @@ namespace ConsoleRPG
                 {
                     myPlayerCoolDownCounter = (myPlayer.myCoolDown - timeSinceLastAttack)/1000;
                     DisplayCooldown();
-                    //Update cooldowntimer
+                    //Update cooldowntimer!!!!!
                 }
             }
             for (int i = 0; i < myEnemies.Count; i++)
@@ -409,11 +410,10 @@ namespace ConsoleRPG
                 {
                     for (int i = 0; i < myEnemies.Count; i++)
                     {
-                        if (myTurnListByBattleID.Count > 0) //ASK WHY I NEED THIS??!
+                        if (myTurnListByBattleID.Count > 0) 
                         {
                             if (myEnemies[i].myBattleID  == myTurnListByBattleID[0])
                             {
-                                Thread.Sleep(1000);
                                 if (myEnemies[i].myIsAlive)
                                 {
                                     Attack(myEnemies[i], myPlayer);

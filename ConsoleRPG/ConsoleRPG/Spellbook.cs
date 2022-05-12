@@ -37,6 +37,8 @@ namespace ConsoleRPG
                 Utilities.Cursor(printSpellPosition);
                 Console.Write(mySpells[i].mySpellName + "(" + mySpells[i].myManaCost + "MP)");
                 printSpellPosition = printSpellPosition.Down();
+                printSpellPosition = printSpellPosition.Down();
+
             }
 
         }
@@ -49,6 +51,7 @@ namespace ConsoleRPG
             {
                 Utilities.Cursor(printSpellPosition);
                 Console.Write("                    ");
+                printSpellPosition = printSpellPosition.Down();
                 printSpellPosition = printSpellPosition.Down();
             }
         }
