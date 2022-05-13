@@ -71,6 +71,7 @@ namespace ConsoleRPG
 						   rootRoomPath + "Bedroom.txt",
 						   true);//Loot and Key to door 7
 			newRoom.AddKeyToChest(2);
+			newRoom.AddItemToChest(UpgradeType.ArmorUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Bathroom", "a small bathroom",
@@ -79,6 +80,7 @@ namespace ConsoleRPG
 						   new List<int>(),
 						   rootRoomPath + "Bathroom.txt",
 						   true);
+			newRoom.AddItemToChest(UpgradeType.ManaUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Diningroom", "a big diningroom",
@@ -101,6 +103,7 @@ namespace ConsoleRPG
 						   new List<int>(),
 						   rootRoomPath + "Storageroom.txt",
 						   true);//Loot
+			newRoom.AddItemToChest(UpgradeType.SwordUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Kitchen", "a big kitchen...",
@@ -110,6 +113,7 @@ namespace ConsoleRPG
 						   rootRoomPath + "Kitchen.txt",
 						   true);//Loot and Key to door 11
 			newRoom.AddKeyToChest(3);
+			newRoom.AddItemToChest(UpgradeType.ArmorUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Library", "a huge library filled with tall bookshelfs",
@@ -119,6 +123,7 @@ namespace ConsoleRPG
 						   rootRoomPath + "Library.txt",
 						   true);//Loot and Key to door 12
 			newRoom.AddKeyToChest(4);
+			newRoom.AddItemToChest(UpgradeType.HealthUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Office", "a large study with a big desk at the far end of the room",
@@ -127,6 +132,7 @@ namespace ConsoleRPG
 						   new List<int>(),
 						   rootRoomPath + "Office.txt",
 						   true);//Loot
+			newRoom.AddItemToChest(UpgradeType.ManaUpgrade);
 			myRooms.Add(newRoom.myRoomID, newRoom);
 
 			newRoom = new Room("Master suit", "the master suite",

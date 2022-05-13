@@ -293,6 +293,14 @@ namespace ConsoleRPG
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+        static public Actors RandomEnemy(int aDifficultyLevel)
+        {
+            int indexMax = Clamp(aDifficultyLevel, 1, 3);
+            int enemyEnumIndex = GetRandom(indexMax);
+
+            return (Actors)enemyEnumIndex;
+        }
     }
 
     enum DoorDirections
@@ -309,7 +317,10 @@ namespace ConsoleRPG
         Bat,
         Spider,
         Dragon,
-        EvilLord
+        EliteDragon,
+        EvilLord,
+        Enemy,
+        NULL
     }
 
     enum Actions

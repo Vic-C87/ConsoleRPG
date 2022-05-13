@@ -11,11 +11,8 @@ namespace ConsoleRPG
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            int largestWindowX = Console.WindowWidth;
-            int largestWindowY = Console.WindowHeight;
-
-            Console.BufferWidth = Console.WindowWidth = largestWindowX;
-            Console.BufferHeight = Console.WindowHeight = largestWindowY;
+            Console.BufferWidth = Console.WindowWidth;
+            Console.BufferHeight = Console.WindowHeight;
 
             InputSimulator inputSimulator = new InputSimulator();
             inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
@@ -23,7 +20,7 @@ namespace ConsoleRPG
             Console.CursorVisible = false;
             Console.SetCursorPosition(0, 0);
 
-            GameManager game = new GameManager();                      
+            GameManager game = new GameManager();
         }       
     }    
 }

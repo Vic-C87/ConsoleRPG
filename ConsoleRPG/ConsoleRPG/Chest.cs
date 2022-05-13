@@ -52,14 +52,17 @@ namespace ConsoleRPG
                         Utilities.Draw(x + myOffSet.X, y + myOffSet.Y, ' ');
                     }
                 }
-            }
-            if(myKeyID != 0)
-            {
-                SoundManager.PlaySound(SoundType.GetKey, false, true);
-            }
+            }            
+            SoundManager.PlaySound(SoundType.GetKey, false, true);
+            
             SoundManager.PlaySound(SoundType.MansionAmbience, true);
 
             return myItem;
+        }
+
+        int GetGold()
+        {
+            return 0;
         }
 
     }

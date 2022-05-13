@@ -22,6 +22,7 @@ namespace ConsoleRPG
 
 		public Chest myChest;
 		public bool myHaveChest;
+		public bool myRoomCleared;
 
 		public Room()
 		{
@@ -35,6 +36,7 @@ namespace ConsoleRPG
 			myPortalPlaced = false;
 			myChest = null;
 			myHaveChest = false;
+			myRoomCleared = false;
 		}
 
 		public Room(string aTitle, string aDescription, int aRoomID, bool aVisited,
@@ -57,6 +59,7 @@ namespace ConsoleRPG
             {
 				myChest = new Chest();
             }
+			myRoomCleared = aRoomID == 0;
 		}
 
 		public void AddKeyToChest(int aKeyID)
@@ -93,6 +96,26 @@ namespace ConsoleRPG
                 }
             }
 			return doorID;
+        }
+
+		public int GetDifficultyLevel()
+        {
+			int difficulty;
+
+			if (myRoomID < 4)
+            {
+				difficulty = 1;
+            }
+			else if (myRoomID > 4 && myRoomID < 10)
+            {
+				difficulty = 2;
+            }
+			else
+            {
+				difficulty = 3;
+            }
+
+			return difficulty;
         }
 	}
 

@@ -16,13 +16,13 @@ namespace ConsoleRPG
 
             Spell newSpell;
 
-            newSpell = new Spell("Lightning Bolt", SpellType.LightningBolt, SoundType.LighningHurt, 10, 5);
+            newSpell = new Spell("Lightning Bolt", SpellType.LightningBolt, SoundType.LighningHurt, 15, 5);
             mySpellList.Add(newSpell);
 
-            newSpell = new Spell("Fire Ball", SpellType.Fireball, SoundType.EnemyHurt, 10, 5);
+            newSpell = new Spell("Fire Ball", SpellType.Fireball, SoundType.EnemyHurt, 15, 5);
             mySpellList.Add(newSpell);
 
-            newSpell = new Spell("Ice Blast", SpellType.Iceblast, SoundType.EnemyHurt, 10, 5);
+            newSpell = new Spell("Ice Blast", SpellType.Iceblast, SoundType.EnemyHurt, 15, 5);
             mySpellList.Add((newSpell));
         }
 

@@ -28,6 +28,8 @@ namespace ConsoleRPG
         bool myChestTrigger = false;
         bool myPickUpText = false;
 
+        //int myPlayerGold;
+
         Player myPlayer;
         DisplayStats myDisplayStats;
         readonly TownPortal myPortal;
@@ -44,6 +46,7 @@ namespace ConsoleRPG
         readonly GameManager myGameManager;
         readonly SpellFactory mySpellFactory;
         readonly ItemFactory myItemFactory;
+        EnemyFactory myEnemyFactory;
 
         char[,] myDoorLockSprite;
 
@@ -52,7 +55,7 @@ namespace ConsoleRPG
         Vector2 myBaseRoomSize = new Vector2(105, 25);
 
         Tavern myTavern;
-
+        FarmScene myFarmScene;
         
 
         public GameManager()
@@ -67,12 +70,15 @@ namespace ConsoleRPG
             myGameManager = this;
             mySpellFactory = new SpellFactory();
             myItemFactory = new ItemFactory();
+            myEnemyFactory = new EnemyFactory();
             myPortal = new TownPortal();
             myTavern = new Tavern();
+            myFarmScene = new FarmScene();
             SoundManager.LoadSounds();
 
 
             Console.CursorVisible = false;
+            myFarmScene.DrawScene();
             Load();
             EnterRoom(DoorDirections.North);
             
@@ -98,6 +104,7 @@ namespace ConsoleRPG
             myDoorsByID = doorFactory.GetDoors();
             
             myPlayer = new Player(ReadSpriteFromFile(@"Sprites\Man.txt"), myPlayerBaseHP);
+            //myPlayerGold = 0;
             myDisplayStats = new DisplayStats();
             myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.LightningBolt));
             myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.Fireball));
@@ -455,6 +462,9 @@ namespace ConsoleRPG
         {
             ConsoleKeyInfo input;
 
+            while (Console.KeyAvailable)
+                Console.ReadKey(true);
+
             input = Console.ReadKey(true);
 
             if (input.Key == ConsoleKey.Escape)
@@ -466,24 +476,28 @@ namespace ConsoleRPG
             {
                 if (aGameObject.MyPosition.Up().Y > myRoomsByID[myPlayer.myCurrentRoom].myNorthBound + myDrawRoomOffSet.Y)
                     aGameObject.Move(aGameObject.MyPosition.Up());
+                CheckEncounter();
             }
             else if (input.Key == ConsoleKey.RightArrow)
             {
                 if (aGameObject.MyPosition.Right().X < myRoomsByID[myPlayer.myCurrentRoom].myEastBound + myDrawRoomOffSet.X - aGameObject.MyWidth)
                     aGameObject.Move(aGameObject.MyPosition.Right());
                 HidePickUpText();
+                CheckEncounter();
             }
             else if (input.Key == ConsoleKey.DownArrow)
             {
                 if (aGameObject.MyPosition.Down().Y < myRoomsByID[myPlayer.myCurrentRoom].mySouthBound + myDrawRoomOffSet.Y - aGameObject.MyHeight)
                     aGameObject.Move(aGameObject.MyPosition.Down());
                 HidePickUpText();
+                CheckEncounter();
             }
             else if (input.Key == ConsoleKey.LeftArrow)
             {
                 if (aGameObject.MyPosition.Left().X > myRoomsByID[myPlayer.myCurrentRoom].myWestBound + myDrawRoomOffSet.X)
                     aGameObject.Move(aGameObject.MyPosition.Left());
                 HidePickUpText();
+                CheckEncounter();
             }
             else if (input.Key == ConsoleKey.Enter)
             {
@@ -544,27 +558,77 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-            //DEBUG
-            Actor bat = new Actor(Actors.Bat, @"Sprites\Bat.txt", 10, 2, 5000);
-            bat.AddHitSprite(@"Sprites\BatDown.txt");
-            Actor dracula = new Actor(Actors.Dragon, @"Sprites\Dracula.txt", 15, 2, 7000);
-            
-            Actor spider = new Actor(Actors.Bat, @"Sprites\Spider.txt", 10, 2, 5000);
-            spider.AddHitSprite(@"Sprites\SpiderHit.txt");
-            List<Actor> testBattleEnemies = new List<Actor>() { bat, dracula, spider};
-            //DEBUG
+            List<Actor> battleList = new List<Actor>();
 
-            //Get random enemy list!!!
-            myBattleMode = true;
-            myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
-            myMansionAmbiencePlaying = false;
-            myBattleManager.StartBattle(testBattleEnemies, myPlayer, myGameManager, myRoomsByID[myPlayer.myCurrentRoom].myRoomMap);
+            Actors enemyOne = Actors.NULL;
+            Actors enemyTwo = Actors.NULL;
+            Actors enemyThree = Actors.NULL;
+            if (myPlayer.myCurrentRoom == 14)
+            {
+                enemyOne = Actors.EliteDragon;
+                enemyTwo = Actors.EvilLord;
+                enemyThree = Actors.EliteDragon;
+            }
+            else
+            {
+                int numberOfEnemies = myPlayer.myCurrentRoom == 1 ? 1 : Utilities.GetRandom(3);
+
+                switch (numberOfEnemies)
+                {
+                    case 1:
+                        enemyOne = Utilities.RandomEnemy(myRoomsByID[myPlayer.myCurrentRoom].GetDifficultyLevel());
+                        break;
+                    case 2:
+                        enemyOne = Utilities.RandomEnemy(myRoomsByID[myPlayer.myCurrentRoom].GetDifficultyLevel());
+                        enemyTwo = Utilities.RandomEnemy(myRoomsByID[myPlayer.myCurrentRoom].GetDifficultyLevel());
+                        break;
+                    case 3:
+                        enemyOne = Utilities.RandomEnemy(myRoomsByID[myPlayer.myCurrentRoom].GetDifficultyLevel());
+                        enemyTwo = Utilities.RandomEnemy(myRoomsByID[myPlayer.myCurrentRoom].GetDifficultyLevel());
+                        enemyThree = Utilities.RandomEnemy(myRoomsByID[myPlayer.myCurrentRoom].GetDifficultyLevel());
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            battleList = myEnemyFactory.GetBattleList(enemyOne, enemyTwo, enemyThree);
+            if (battleList != null)
+            {
+                myBattleMode = true;
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myMansionAmbiencePlaying = false;
+                myBattleManager.StartBattle(battleList, myPlayer, myGameManager, myRoomsByID[myPlayer.myCurrentRoom].myRoomMap);
+            }
+        }
+
+        void CheckEncounter()
+        {
+            if (!myRoomsByID[myPlayer.myCurrentRoom].myRoomCleared)
+            {
+                int random = Utilities.GetRandom(10);
+                if (random == 1)
+                {
+                    StartBattle(); 
+                }
+            }
         }
 
         public void EndBattle()
         {
             myBattleMode = false;
-            EnterRoom(myPlayerPositionBeforeBattle);
+            if(myPlayer.myCurrentHP > 0)
+            {
+                myRoomsByID[myPlayer.myCurrentRoom].myRoomCleared = true;
+                EnterRoom(myPlayerPositionBeforeBattle);
+            }
+            else
+            {
+                myPlayer.myCurrentRoom = 0;
+                myPlayer.myCurrentHP = myPlayer.myBaseHP;
+                myPlayer.myCurrentMP = myPlayer.myMaxMP;
+                EnterRoom(DoorDirections.North);
+            }
         }
 
         void DisplayPickUpText(int aKeyID, string anItemTitle)

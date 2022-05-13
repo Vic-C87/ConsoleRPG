@@ -27,7 +27,7 @@ namespace ConsoleRPG
         {
             myGameObject = aGameObject;
             myCurrentRoom = 0;
-            myStat = new Stat(0, aBaseHP, 15, 3, 1);
+            myStat = new Stat(0, aBaseHP, 5, 3, 1);
             myBaseHP = myStat.myHP;
             myCurrentHP = myBaseHP;
             myMaxMP = myStat.myMP;

@@ -82,8 +82,20 @@ namespace ConsoleRPG
                 CheckAlive();
             }
             Utilities.CursorPosition(85, 22);
-            Console.Write("Victory! ");
-            SoundManager.PlaySound(SoundType.BattleVictory);
+            if (myPlayerStillAlive)
+            {
+                Console.Write("Victory!");
+                SoundManager.PlaySound(SoundType.BattleVictory);
+
+            }
+            else
+            {
+                Console.Write("You Loose!");
+                Utilities.CursorPosition(85, 23);
+                Console.Write("You will respawn in the village.");
+                //Play loosing sound!!!
+            }
+            Utilities.CursorPosition(85, 24);
             Utilities.PressEnterToContinue();
             myStopWatch.Reset();
             aPlayerReference.myCurrentHP = myPlayer.myHP;
@@ -187,8 +199,8 @@ namespace ConsoleRPG
 
         void DisplayCooldown()
         {
-            //Utilities.CursorPosition(103, 34);
-            //Console.Write(myPlayerCoolDownCounter);
+            Utilities.CursorPosition(103, 34);
+            Console.Write(myPlayerCoolDownCounter);
         }
 
         void SelectAction()
@@ -277,7 +289,7 @@ namespace ConsoleRPG
             ConsoleKeyInfo selection;
             
             while (Console.KeyAvailable)
-                Console.ReadKey(false);
+                Console.ReadKey(true);
 
             selection = Console.ReadKey(true);
 
@@ -418,6 +430,11 @@ namespace ConsoleRPG
                                 {
                                     Attack(myEnemies[i], myPlayer);
                                     UpdateHPDisplayed(myPlayer);
+                                    if (myPlayer.myHP < 1)
+                                    {
+                                        myPlayerStillAlive = false;
+                                        return;
+                                    }
                                 }
                                 myEnemies[i].myLastAttackTime = myStopWatch.ElapsedMilliseconds;
                                 myTurnListByBattleID.RemoveAt(0);

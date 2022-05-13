@@ -35,6 +35,8 @@ namespace ConsoleRPG
 
         public char[,] myHitSprite = null;
 
+        public string mySpritePath;
+
         public Spellbook mySpellbook;
 
         public Vector2 myBattlePosition;
@@ -54,6 +56,27 @@ namespace ConsoleRPG
             myLastAttackTime = 0L;
             myIsAlive = true;
             mySprite = Utilities.ReadFromFile(aSpritePath, out myName);
+            mySpritePath = aSpritePath;
+            mySpellbook = new Spellbook();
+            myBattlePosition = new Vector2();
+            myBattleNameOnScreenPosition = new Vector2();
+        }
+
+        public Actor(Actor aCopy)
+        {
+            myType = aCopy.myType;
+            myName = aCopy.myName;
+            myHP = aCopy.myHP;
+            myMaxHP = aCopy.myMaxHP;
+            myDamage = aCopy.myDamage;
+            myIsPlayer = aCopy.myIsPlayer;
+            myCoolDown = aCopy.myCoolDown;
+            myBattleID = aCopy.myBattleID;
+            myLastAttackTime = aCopy.myLastAttackTime;
+            myIsAlive = aCopy.myIsAlive;
+            mySprite = aCopy.mySprite;
+            myHitSprite = aCopy.myHitSprite;
+            mySpritePath = aCopy.mySpritePath;
             mySpellbook = new Spellbook();
             myBattlePosition = new Vector2();
             myBattleNameOnScreenPosition = new Vector2();
@@ -72,6 +95,7 @@ namespace ConsoleRPG
             myLastAttackTime = 0L;
             myIsAlive = true;
             mySprite = aPlayer.myGameObject.MySprite;
+            mySpritePath = null;
             mySpellbook = aPlayer.mySpellbook;
             myBattlePosition = new Vector2();
             myBattleNameOnScreenPosition = new Vector2();
@@ -84,7 +108,6 @@ namespace ConsoleRPG
         {
             myHitSprite = Utilities.ReadFromFile(aPath, out _);
         }
-
 
         public int Attack()
         {
@@ -103,7 +126,8 @@ namespace ConsoleRPG
         {
             if (myIsPlayer)
             {
-                myHP -= (someDamage - myArmor);
+
+                myHP -= TryBlock(someDamage);
             }
             else
             {
@@ -118,9 +142,23 @@ namespace ConsoleRPG
             }
         }
 
+        int TryBlock(int someDamage)
+        {
+            float damagePoints = (float)someDamage;
+            float armor = (float)myArmor;
+            if (armor >= damagePoints * .75f)
+            {
+                return someDamage / 2;
+            }
+            else
+            {
+                return someDamage;
+            }
+        }
+
         public void Heal(int aHealAmount)
         {
-            SoundManager.PlaySound(SoundType.Heal);
+            SoundManager.PlaySound(SoundType.Heal, false, true);
             myHP += aHealAmount;
             if (myHP > myMaxHP)
             {
@@ -133,9 +171,10 @@ namespace ConsoleRPG
             myIsAlive = false;
             ClearSprite(myBattlePosition);
             Utilities.Cursor(myBattleNameOnScreenPosition);
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.Write(myName);
-            Console.ForegroundColor = ConsoleColor.White;
+            if (!myIsPlayer)
+            {
+                Utilities.Color(myName, ConsoleColor.DarkRed);
+            }
         }
 
         public void DrawSprite(Vector2 anOffSet)
