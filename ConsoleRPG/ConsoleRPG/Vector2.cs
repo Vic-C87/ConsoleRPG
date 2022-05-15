@@ -19,24 +19,24 @@ namespace ConsoleRPG
             Y = aCopy.Y;
         }
 
-        public Vector2 Up()
+        public Vector2 Up(int aDistance = 1)
         {
-            return new Vector2(X, Y - 1);
+            return new Vector2(X, Y - aDistance);
         }
 
-        public Vector2 Right()
+        public Vector2 Right(int aDistance = 1)
         {
-            return new Vector2(X + 1, Y);
+            return new Vector2(X + aDistance, Y);
         }
 
-        public Vector2 Down()
+        public Vector2 Down(int aDistance = 1)
         {
-            return new Vector2(X, Y + 1);
+            return new Vector2(X, Y + aDistance);
         }
 
-        public Vector2 Left()
+        public Vector2 Left(int aDistance = 1)
         {
-            return new Vector2(X - 1, Y);
+            return new Vector2(X - aDistance, Y);
         }
 
         public void SetPosition(Vector2 aTarget)

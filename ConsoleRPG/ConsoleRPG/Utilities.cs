@@ -115,6 +115,37 @@ namespace ConsoleRPG
             Console.SetCursorPosition(anXPosition, aYPosition);
         }
 
+        public static bool ActionByInput(Action aMethodName, ConsoleKey aKeyCode)
+        {
+            ConsoleKeyInfo input;
+
+            while (Console.KeyAvailable)
+                Console.ReadKey(true);
+            while (true)
+            {
+                input = Console.ReadKey(true);
+            
+                if (input.Key == aKeyCode)
+                {
+                    aMethodName();
+                    break;
+                }
+                else if (input.Key == ConsoleKey.Escape)
+                {
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
+        public static void Validate(bool aCheck)
+        {
+            if(!aCheck)
+            {
+                System.Environment.Exit(0);
+            }
+        }
 
         /// <summary>
         /// Sets cursor at position given by a Vector2 for X and Y
@@ -292,6 +323,17 @@ namespace ConsoleRPG
                 }
             }
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void ClearSprite(char[,] aSprite, Vector2 anOffSet)
+        {
+            for (int y = 0; y < aSprite.GetLength(1); y++)
+            {
+                for (int x = 0; x < aSprite.GetLength(0); x++)
+                {
+                    Draw(x + anOffSet.X, y + anOffSet.Y, ' ');
+                }
+            }
         }
 
         static public Actors RandomEnemy(int aDifficultyLevel)

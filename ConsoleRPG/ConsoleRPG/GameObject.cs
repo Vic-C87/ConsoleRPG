@@ -81,12 +81,12 @@ namespace ConsoleRPG
         }
 
         /// <summary>
-        /// Takes in a destination as a Vector2 and moves the Sprite to that location, 
+        /// Takes in a destination as a Vector2 and moves the Sprite to that location by Y pos first, 
         /// speedModifier should be an int between 0 and 10
         /// </summary>
         /// <param name="aTarget"></param>
         /// <param name="aSpeedModifier"></param>
-        public void MoveTo(Vector2 aTarget, int aSpeedModifier)
+        public void MoveToByY(Vector2 aTarget, int aSpeedModifier)
         {
             if (MyPosition.Match(aTarget))
             {
@@ -97,7 +97,7 @@ namespace ConsoleRPG
                 int xSteps = Utilities.Abs(aTarget.X - MyPosition.X);
                 int ySteps = Utilities.Abs(aTarget.Y - MyPosition.Y);
 
-                if (ySteps <= xSteps && ySteps != 0)
+                if (ySteps <= xSteps)
                 {
                     if (MyPosition.Y > aTarget.Y)
                     {
@@ -132,7 +132,7 @@ namespace ConsoleRPG
                         }
                     }
                 }
-                else if (xSteps < ySteps && xSteps != 0)
+                else if (xSteps < ySteps)
                 {
                     if (MyPosition.X > aTarget.X)
                     {
@@ -167,5 +167,93 @@ namespace ConsoleRPG
                 }
             }
         }
+
+        /// <summary>
+        /// Takes in a destination as a Vector2 and moves the Sprite to that location by X pos first, 
+        /// speedModifier should be an int between 0 and 10
+        /// </summary>
+        /// <param name="aTarget"></param>
+        /// <param name="aSpeedModifier"></param>
+        public void MoveToByX(Vector2 aTarget, int aSpeedModifier)
+        {
+            if (MyPosition.Match(aTarget))
+            {
+                return;
+            }
+            else
+            {
+                int xSteps = Utilities.Abs(aTarget.X - MyPosition.X);
+                int ySteps = Utilities.Abs(aTarget.Y - MyPosition.Y);
+
+                if (ySteps <= xSteps)
+                {
+                    if (MyPosition.X > aTarget.X)
+                    {
+                        for (int x = 0; x < xSteps; x++)
+                        {
+                            Move(MyPosition.Left(), aSpeedModifier);
+                        }
+                    }
+                    else
+                    {
+                        for (int x = 0; x < xSteps; x++)
+                        {
+                            Move(MyPosition.Right(), aSpeedModifier);
+                        }
+                    }
+
+                    if (MyPosition.Y > aTarget.Y)
+                    {
+                        for (int y = 0; y < ySteps; y++)
+                        {
+                            Move(MyPosition.Up(), aSpeedModifier);
+                        }
+
+                    }
+                    else
+                    {
+                        for (int y = 0; y < ySteps; y++)
+                        {
+                            Move(MyPosition.Down(), aSpeedModifier);
+                        }
+                    }
+                }
+                else if (xSteps < ySteps)
+                {
+                    if (MyPosition.X > aTarget.X)
+                    {
+                        for (int x = 0; x < xSteps; x++)
+                        {
+                            Move(MyPosition.Left(), aSpeedModifier);
+                        }
+                    }
+                    else
+                    {
+                        for (int x = 0; x < xSteps; x++)
+                        {
+                            Move(MyPosition.Right(), aSpeedModifier);
+                        }
+                    }
+
+                    if (MyPosition.Y > aTarget.Y)
+                    {
+                        for (int y = 0; y < ySteps; y++)
+                        {
+                            Move(MyPosition.Up(), aSpeedModifier);
+                        }
+
+                    }
+                    else
+                    {
+                        for (int y = 0; y < ySteps; y++)
+                        {
+                            Move(MyPosition.Down(), aSpeedModifier);
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 }
