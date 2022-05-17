@@ -13,6 +13,8 @@ namespace ConsoleRPG
         public int myArmor;
         public int myCoolDown;
 
+        public int myDeathCounter;
+
         public Stat myStat;
 
         public Actors myType;
@@ -35,6 +37,7 @@ namespace ConsoleRPG
             myBaseDamage = myStat.myDamage;
             myArmor = myStat.myArmor;
             myCoolDown = 3000;
+            myDeathCounter = 0;
             myType = Actors.Player;
             mySpellbook = new Spellbook();
             myKeyIDs = new Dictionary<int, string>();

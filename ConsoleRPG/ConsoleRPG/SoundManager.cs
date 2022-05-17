@@ -19,6 +19,7 @@ namespace ConsoleRPG
         static SoundPlayer myPortalCastPlayer;
         static SoundPlayer myOpenChestPlayer;
         static SoundPlayer myGetKeyPlayer;
+        static SoundPlayer myBattleLostPlayer;
 
         public static void LoadSounds()
         {
@@ -58,6 +59,9 @@ namespace ConsoleRPG
 
                 myGetKeyPlayer = new SoundPlayer(@"Audio\recieveKeyEffect.wav");
                 mySounds.Add(SoundType.GetKey, myGetKeyPlayer);
+
+                myBattleLostPlayer = new SoundPlayer(@"Audio\battleLost.wav");
+                mySounds.Add(SoundType.BattleLost, myBattleLostPlayer);
             }
         }
         public static void PlaySound(SoundType aSoundType, bool aPlayLooping = false, bool aPlaySynced = false)

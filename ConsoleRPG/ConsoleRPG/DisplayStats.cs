@@ -21,6 +21,12 @@ namespace ConsoleRPG
         {
             myActive = true;
             Console.Clear();
+            Utilities.CursorPosition(myStatsOffSet.X, 0);
+            Console.Write("Move around with the arrow keys");
+            Utilities.CursorPosition(myStatsOffSet.X, 1);
+            Console.Write("Place portal back to Village with F1");
+            Utilities.CursorPosition(myStatsOffSet.X, 2);
+            Console.Write("Open Stats menu with TAB");
             Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y);
             Console.Write($"Health:\t{aPlayer.myCurrentHP}/{aPlayer.myStat.myHP}");
             Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 1);
@@ -29,6 +35,8 @@ namespace ConsoleRPG
             Console.Write($"Damage:\t{aPlayer.myStat.myDamage}");
             Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 3);
             Console.Write($"Armor:\t{aPlayer.myStat.myArmor}");
+            Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 7);
+            Console.Write($"Death count:\t{aPlayer.myDeathCounter}");
 
             if (aPlayer.myKeyIDs.Count > 0)
             {

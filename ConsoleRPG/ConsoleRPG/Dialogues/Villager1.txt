@@ -1,6 +1,6 @@
 ﻿Intro
 1
-1*Wellcome stranger, we don't see many outsiders here in this Village.
+1*Welcome stranger, we don't see many outsiders here in this Village.
 2*What brings you to these parts of the land?
 #2*I'm just a lonely traveler seeking shelter for the night.
 3*Ah, I see. Come. Sit. Have a drink and we'll have a room ready for you in just a short while.

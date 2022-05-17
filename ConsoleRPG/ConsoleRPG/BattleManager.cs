@@ -31,19 +31,22 @@ namespace ConsoleRPG
         readonly Vector2[] myEnemySelectorPositons = new Vector2[3] { new Vector2(13, 12), new Vector2(13, 14), new Vector2(13, 16) };
         Vector2 myEnemyNameOnScreenPosition = new Vector2(14, 12); //Increment by Vector2.Down() x2 foreach
 
-        readonly Vector2[] myActionSelectorPositions = new Vector2[3] { new Vector2(9, 32), new Vector2(9, 34), new Vector2(9, 36) };
-        Vector2 myAttackOptionPosition = new Vector2(10, 32);
-        Vector2 myMagicOptionPosition = new Vector2(10, 34);
-        Vector2 myDefendOptionPosition = new Vector2(10, 36);
+        readonly Vector2[] myActionSelectorPositions = new Vector2[3] { new Vector2(9, 28), new Vector2(9, 30), new Vector2(9, 32) };
+        Vector2 myAttackOptionPosition = new Vector2(10, 28);
+        Vector2 myMagicOptionPosition = new Vector2(10, 30);
+        Vector2 myDefendOptionPosition = new Vector2(10, 32);
 
-        readonly Vector2[] mySpellSelectorPositions = new Vector2[3] { new Vector2(20, 32), new Vector2(20, 34), new Vector2(20, 36) };
-        Vector2 mySpellNamePosition = new Vector2(21, 32);
+        readonly Vector2[] mySpellSelectorPositions = new Vector2[3] { new Vector2(20, 28), new Vector2(20, 30), new Vector2(20, 32) };
+        Vector2 mySpellNamePosition = new Vector2(21, 28);
 
         Vector2 myVertFramePosition = new Vector2(30, 0);
-        Vector2 myHoriLeftFramePosition = new Vector2(0, 25);
+        Vector2 myHoriLeftFramePosition = new Vector2(0, 19);
+        Vector2 myCoolDownText = new Vector2(103, 34);
+        Vector2 myEndBattleText = new Vector2(85, 22);
         bool mySelectAction = false;
         bool mySelectEnemy = false;
         bool mySelectSpell = false;
+        Vector2 myOffSet;
 
         public BattleManager()
         {
@@ -53,14 +56,32 @@ namespace ConsoleRPG
             myPlayerStillAlive = false;
             myEnemiesStillAlive = false;
             myStopWatch = new Stopwatch();
-            myVerticalFrame = Utilities.ReadFromFile(@"Sprites\VerticalFrame.txt", out _);
+            myVerticalFrame = Utilities.ReadFromFile(@"Sprites\BattleVerticalFrame.txt", out _);
             myHorizontalLeftFrame = Utilities.ReadFromFile(@"Sprites\HorizontalLeftFrame.txt", out _);
             myPlayerCoolDownCounter = 0;
+            myOffSet = new Vector2(Console.WindowWidth / 8, Console.WindowHeight / 5);
 
+            for (int i = 0; i < 3; i++)
+            {
+                myEnemySpritePositions[i].OffSet(myOffSet);
+                myEnemySelectorPositons[i].OffSet(myOffSet);
+                myActionSelectorPositions[i].OffSet(myOffSet);
+                mySpellSelectorPositions[i].OffSet(myOffSet);
+            }
+            myPlayerSpritePosition.OffSet(myOffSet);
+            myFeedbackText.OffSet(myOffSet);
+            myEnemyNameOnScreenPosition.OffSet(myOffSet);
+            myAttackOptionPosition.OffSet(myOffSet);
+            myMagicOptionPosition.OffSet(myOffSet);
+            myDefendOptionPosition.OffSet(myOffSet);
+            mySpellNamePosition.OffSet(myOffSet);
+            myVertFramePosition.OffSet(myOffSet);
+            myHoriLeftFramePosition.OffSet(myOffSet);
+            myCoolDownText.OffSet(myOffSet);
+            myEndBattleText.OffSet(myOffSet);
         }
         public void StartBattle(List<Actor> anEnemyList, Player aPlayerReference, GameManager theGameManager, char[,] aRoomSprite)
-        {
-            
+        {            
             myPlayer = new Actor(aPlayerReference);
             myPlayerCoolDownCounter = myPlayer.myCoolDown/1000;
             myPlayerStillAlive = true;
@@ -71,8 +92,7 @@ namespace ConsoleRPG
                 myEnemies.Add(anEnemyList[i]);
                 myEnemies[i].myBattleID = i + 1;
                 myTurnListByBattleID.Add(myEnemies[i].myBattleID);
-            }
-            
+            }            
             myStopWatch.Start();
             DrawBattleScene(aRoomSprite);
             while (myPlayerStillAlive && myEnemiesStillAlive)
@@ -81,21 +101,21 @@ namespace ConsoleRPG
                 Act();
                 CheckAlive();
             }
-            Utilities.CursorPosition(85, 22);
+            Utilities.Cursor(myEndBattleText);
             if (myPlayerStillAlive)
             {
                 Console.Write("Victory!");
                 SoundManager.PlaySound(SoundType.BattleVictory);
-
             }
             else
             {
                 Console.Write("You Loose!");
-                Utilities.CursorPosition(85, 23);
+                Utilities.Cursor(myEndBattleText.Down());
                 Console.Write("You will respawn in the village.");
-                //Play loosing sound!!!
+                aPlayerReference.myDeathCounter++;
+                SoundManager.PlaySound(SoundType.BattleLost);
             }
-            Utilities.CursorPosition(85, 24);
+            Utilities.Cursor(myEndBattleText.Down(2));
             Utilities.PressEnterToContinue();
             myStopWatch.Reset();
             aPlayerReference.myCurrentHP = myPlayer.myHP;
@@ -124,6 +144,7 @@ namespace ConsoleRPG
             Utilities.Cursor(myDefendOptionPosition);
             Console.WriteLine("Defend");
             Vector2 roomWallPosition = new Vector2(50, 0);
+            roomWallPosition.OffSet(myOffSet);
             for (int y = 0; y < 7; y++)
             {
                 for (int x = 0; x < aRoomSprite.GetLength(0); x++)
@@ -131,11 +152,36 @@ namespace ConsoleRPG
                     Utilities.Draw(x + roomWallPosition.X, y + roomWallPosition.Y, aRoomSprite[x, y]);
                 }
             }
-            Utilities.DrawSprite(myVerticalFrame, myVertFramePosition, ConsoleColor.Yellow);
-            Utilities.DrawSprite(myHorizontalLeftFrame, myHoriLeftFramePosition, ConsoleColor.Yellow);
+            Utilities.DrawSprite(myVerticalFrame, myVertFramePosition, ConsoleColor.DarkYellow);
+            Utilities.DrawSprite(myHorizontalLeftFrame, myHoriLeftFramePosition, ConsoleColor.DarkYellow);
+            int xFrameLenght = (roomWallPosition.X - myHoriLeftFramePosition.X) + aRoomSprite.GetLength(0);
+            Vector2 framePos = myOffSet.Left();
+            framePos = framePos.Up();
+            Utilities.Cursor(framePos);
+            for (int i = 0; i < xFrameLenght; i++)
+            {
+                Utilities.Color("~", ConsoleColor.DarkRed);
+            }
+            //framePos = framePos.Down();
+            Utilities.Cursor(framePos.Down(38));
+            for (int i = 0; i < xFrameLenght; i++)
+            {
+                Utilities.Color("~", ConsoleColor.DarkRed);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            for (int i = 0; i < 39; i++)
+            {
+
+                Utilities.Draw(framePos.X, framePos.Down(i).Y, '§');
+                Utilities.Draw(framePos.X + xFrameLenght, framePos.Down(i).Y, '§');
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+
+
             DrawEnemies();
             myPlayer.DrawSprite(myPlayerSpritePosition);
             UpdateHPDisplayed(myPlayer);
+            DisplayCooldown();
             SoundManager.PlaySound(SoundType.BattleStart);
         }
 
@@ -198,9 +244,9 @@ namespace ConsoleRPG
         }
 
         void DisplayCooldown()
-        {
-            Utilities.CursorPosition(103, 34);
-            Console.Write(myPlayerCoolDownCounter);
+        {            
+            Utilities.Cursor(myCoolDownText);
+            Console.Write("CoolDown: " + myPlayerCoolDownCounter + "s.");
         }
 
         void SelectAction()
@@ -223,7 +269,7 @@ namespace ConsoleRPG
                 Console.Write(mySelectorRight);
                 while (mySelectEnemy)
                 {
-                    GetSelectionInput(myEnemySelectorPositons, 3, FrameType.EnemyNameFrame,ref selectIndex, ref mySelectEnemy, out _);
+                    GetSelectionInput(myEnemySelectorPositons, myEnemies.Count, FrameType.EnemyNameFrame,ref selectIndex, ref mySelectEnemy, out _);
                 }
             }
             if (actionSelected == Actions.Attack)
@@ -252,7 +298,7 @@ namespace ConsoleRPG
                 Console.Write(mySelectorRight);
                 while (mySelectEnemy && !goBack && spellCost <= myPlayer.myMP)
                 {
-                    GetSelectionInput(myEnemySelectorPositons, 3, FrameType.EnemyNameFrame,ref selectIndex, ref mySelectEnemy, out _);
+                    GetSelectionInput(myEnemySelectorPositons, myEnemies.Count, FrameType.EnemyNameFrame,ref selectIndex, ref mySelectEnemy, out _);
                 }
                 
                 if (myPlayer.myMP >= spellCost && !goBack)
@@ -425,7 +471,7 @@ namespace ConsoleRPG
                         if (myTurnListByBattleID.Count > 0) 
                         {
                             if (myEnemies[i].myBattleID  == myTurnListByBattleID[0])
-                            {
+                            {                                                                
                                 if (myEnemies[i].myIsAlive)
                                 {
                                     Attack(myEnemies[i], myPlayer);
@@ -436,6 +482,7 @@ namespace ConsoleRPG
                                         return;
                                     }
                                 }
+                                
                                 myEnemies[i].myLastAttackTime = myStopWatch.ElapsedMilliseconds;
                                 myTurnListByBattleID.RemoveAt(0);
                             }
@@ -465,10 +512,7 @@ namespace ConsoleRPG
                     allEnemiesDead = false;
                 }
             }
-            if (allEnemiesDead)
-            {
-                myEnemiesStillAlive = false;
-            }
+            myEnemiesStillAlive = !allEnemiesDead;
 
             return myEnemiesStillAlive;
         }        

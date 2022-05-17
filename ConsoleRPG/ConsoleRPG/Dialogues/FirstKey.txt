@@ -1,0 +1,7 @@
+﻿Bedroom Key
+2
+#1*Barman! I'm in need of your assistance.
+1*Ah of course traveller! What can I help you with?
+#2*I'm having trouble finding my way in the mansion. Most of the doors seems to be locked and I can't seem to find anyway through them.
+2*Well from what I remember there should be a spare key for the bedroom door in the cloakroom, just north of the great hall.
+#3*Thank you barman! I will search there for it.

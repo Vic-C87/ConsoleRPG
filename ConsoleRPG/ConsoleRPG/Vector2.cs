@@ -53,5 +53,11 @@ namespace ConsoleRPG
             }
             return false;
         }
+
+        public void OffSet(Vector2 anOffSet)
+        {
+            X += anOffSet.X;
+            Y += anOffSet.Y;
+        }
     }
 }

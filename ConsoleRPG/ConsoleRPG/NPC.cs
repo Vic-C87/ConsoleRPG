@@ -17,6 +17,11 @@ namespace ConsoleRPG
             myInteractions.Add(Quest.EnterTavern, Utilities.GetDialogue(aDialoguePath));            
         }
 
+        public void AddDialogue(Quest aQuest, string aPath)
+        {
+            myInteractions.Add(aQuest, Utilities.GetDialogue(aPath));
+        }
+
         public Dialogue GetDialogue(Quest aQuest)
         {
             if (myInteractions.ContainsKey(aQuest))

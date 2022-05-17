@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace ConsoleRPG
 {
@@ -38,7 +39,7 @@ namespace ConsoleRPG
         /// <summary>
         /// Takes in a standard dice notation as a string and returns result of rolls as an int.
         /// Example of standard dice notation: 2d6+10--
-        /// 2rolls, 6 faces and then ads 10 to final result
+        /// 2rolls, 6 faces and then add 10 to final result
         /// </summary>
         /// <param name="aDiceType"></param>
         /// <returns></returns>
@@ -143,6 +144,7 @@ namespace ConsoleRPG
         {
             if(!aCheck)
             {
+
                 System.Environment.Exit(0);
             }
         }
@@ -164,47 +166,45 @@ namespace ConsoleRPG
             int heigth = 0;
             try
             {
-                using (StreamReader sr = new StreamReader(aMapPath))
+                using StreamReader sr = new StreamReader(aMapPath);
+                aTitle = sr.ReadLine();
+                string size = sr.ReadLine();
+                string pattern = @"(\d{1,3})[xX](\d{1,3})";
+                string xWidth = "";
+                string yHeigth = "";
+
+                MatchCollection matches = Regex.Matches(size, pattern);
+
+                foreach (Match match in matches)
                 {
-                    aTitle = sr.ReadLine();
-                    string size = sr.ReadLine();
-                    string pattern = @"(\d{1,3})[xX](\d{1,3})";
-                    string xWidth = "";
-                    string yHeigth = "";
+                    GroupCollection data = match.Groups;
+                    xWidth = data[1].Value;
+                    yHeigth = data[2].Value;
+                }
 
-                    MatchCollection matches = Regex.Matches(size, pattern);
+                width = int.Parse(xWidth);
+                heigth = int.Parse(yHeigth);
+                map = new char[width, heigth];
 
-                    foreach (Match match in matches)
+                List<string> lines = new List<string>();
+                string line;
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    lines.Add(line);
+                }
+                for (int y = 0; y < heigth; y++)
+                {
+                    for (int x = 0; x < width; x++)
                     {
-                        GroupCollection data = match.Groups;
-                        xWidth = data[1].Value;
-                        yHeigth = data[2].Value;
-                    }
-
-                    width = int.Parse(xWidth);
-                    heigth = int.Parse(yHeigth);
-                    map = new char[width, heigth];
-
-                    List<string> lines = new List<string>();
-                    string line;
-
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        lines.Add(line);
-                    }
-                    for (int y = 0; y < heigth; y++)
-                    {
-                        for (int x = 0; x < width; x++)
+                        if (x >= lines[y].Length)
                         {
-                            if (x >= lines[y].Length)
-                            {
-                                map[x, y] = ' ';
-                                continue;
-                            }
-                            else
-                             {
-                                map[x, y] = lines[y][x];
-                            }
+                            map[x, y] = ' ';
+                            continue;
+                        }
+                        else
+                        {
+                            map[x, y] = lines[y][x];
                         }
                     }
                 }
@@ -219,6 +219,33 @@ namespace ConsoleRPG
             return map;
         }
 
+        static public List<string> GetPrologue(string aFilePath)
+        {
+            List<string> lines = new List<string>();
+
+            try
+            {
+                using StreamReader sr = new StreamReader(aFilePath);
+                _ = sr.ReadLine();
+                
+
+
+                string line;
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    lines.Add(line);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Could not read file");
+                Console.WriteLine(e.Message);
+            }
+
+            return lines;
+        }
+
         static public Dialogue GetDialogue(string aDialoguePath)
         {
             string title = "";
@@ -230,18 +257,16 @@ namespace ConsoleRPG
 
             try
             {
-                using (StreamReader sr = new StreamReader(aDialoguePath))
+                using StreamReader sr = new StreamReader(aDialoguePath);
+                title = sr.ReadLine();
+                _ = int.TryParse(sr.ReadLine(), out id);
+
+
+                string line;
+
+                while ((line = sr.ReadLine()) != null)
                 {
-                    title = sr.ReadLine();
-                    _ = int.TryParse(sr.ReadLine(), out id);
-                    
-
-                    string line;
-
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        lines.Add(line);
-                    }                   
+                    lines.Add(line);
                 }
             }
             catch (Exception e)
@@ -336,12 +361,21 @@ namespace ConsoleRPG
             }
         }
 
-        static public Actors RandomEnemy(int aDifficultyLevel)
+        public static Actors RandomEnemy(int aDifficultyLevel)
         {
             int indexMax = Clamp(aDifficultyLevel, 1, 3);
             int enemyEnumIndex = GetRandom(indexMax);
 
             return (Actors)enemyEnumIndex;
+        }
+
+        public static void Typewriter(string aString, int aPauseBetweenLettersInMS)
+        {
+            for(int i = 0; i < aString.Length; i++)
+            {
+                Console.Write(aString[i]);
+                Thread.Sleep(aPauseBetweenLettersInMS);
+            }
         }
     }
 
@@ -399,7 +433,8 @@ namespace ConsoleRPG
         VillageAmbience,
         PortalCast,
         OpenChest,
-        GetKey
+        GetKey,
+        BattleLost
     }
 
     enum UpgradeType
@@ -415,6 +450,7 @@ namespace ConsoleRPG
 
     enum Quest
     {
-        EnterTavern
+        EnterTavern,
+        FirstKey
     }
 }

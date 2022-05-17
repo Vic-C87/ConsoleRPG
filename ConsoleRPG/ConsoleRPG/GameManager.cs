@@ -19,16 +19,19 @@ namespace ConsoleRPG
         bool myDisplayingStats = false;
 
         bool myMansionAmbiencePlaying = false;
+        bool myHasEnteredMansion = false;
 
         bool myPortalPlaced = false;
         int myPortalRoom;
         bool myPortalTrigger = false;
         bool myRoomPortalTrigger = false;
 
+        bool myTavernDoorTrigger = false;
+
         bool myChestTrigger = false;
         bool myPickUpText = false;
 
-        //int myPlayerGold;
+        bool myGameStart = true;
 
         Player myPlayer;
         DisplayStats myDisplayStats;
@@ -46,16 +49,15 @@ namespace ConsoleRPG
         readonly GameManager myGameManager;
         readonly SpellFactory mySpellFactory;
         readonly ItemFactory myItemFactory;
-        EnemyFactory myEnemyFactory;
+        readonly EnemyFactory myEnemyFactory;
 
         char[,] myDoorLockSprite;
 
         Vector2 myTextFeedBackPosition = new Vector2();
 
         Vector2 myBaseRoomSize = new Vector2(105, 25);
-
-        Tavern myTavern;
-        FarmScene myFarmScene;
+        readonly Tavern myTavern;
+        readonly FarmScene myFarmScene;
         
 
         public GameManager()
@@ -76,12 +78,12 @@ namespace ConsoleRPG
             myFarmScene = new FarmScene();
             SoundManager.LoadSounds();
 
-
             Console.CursorVisible = false;
             myFarmScene.DrawScene();
             Load();
             EnterRoom(DoorDirections.North);
-            
+            Console.WriteLine("Move around with the arrow keys\nPlace portal back to Village with F1\nOpen Stats menu with TAB");
+
             while(myGameRunning)
             {
                 if (!myBattleMode && !myDisplayingStats)
@@ -136,6 +138,10 @@ namespace ConsoleRPG
             {
                 myDoorTriggerActivated[(DoorDirections)i] = false;
             }
+            myRoomPortalTrigger = false;
+            myChestTrigger = false;
+            myTavernDoorTrigger = false;
+            myPortalTrigger = false;
         }
 
         void SetHasDoors()
@@ -161,6 +167,11 @@ namespace ConsoleRPG
 
         void EnterRoom(DoorDirections anEntryPoint)
         {
+            if (!myHasEnteredMansion && myPlayer.myCurrentRoom == 1)
+            {
+                myHasEnteredMansion = true;
+                myTavern.myFirstKey = true;
+            }
             if (!myMansionAmbiencePlaying)
             {
                 SoundManager.PlaySound(SoundType.MansionAmbience, true);
@@ -178,7 +189,20 @@ namespace ConsoleRPG
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
             PlaceLocks();
             SetHasDoors();
-            myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
+            if (myGameStart)
+            {
+                myGameStart = false;
+                myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(DoorDirections.East).Down(6).Left(6));
+                myPlayer.myGameObject.MoveToByX(myPlayer.myGameObject.MyPosition.Right(28).Up(3), 2);
+                Thread.Sleep(500);
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myTavern.EnterTavern();
+                EnterRoom(myPlayerPositionBeforeBattle);
+            }
+            else
+            {
+                myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
+            }
             DisplayPortal();
         }
 
@@ -272,12 +296,17 @@ namespace ConsoleRPG
                     Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to use portal");
                 }
+                else if (yPosition == myDrawRoomOffSet.Y + 11 && (xPosition == myDrawRoomOffSet.X + 27 || xPosition == myDrawRoomOffSet.X + 28 || xPosition == myDrawRoomOffSet.X + 29 || xPosition == myDrawRoomOffSet.X + 30))
+                {
+                    myTavernDoorTrigger = true;
+                    Utilities.Cursor(myTextFeedBackPosition);
+                    Console.WriteLine("Press \'Enter\' to enter Tavern");
+                }
                 else //Reset trigger
                 {
-                    ResetDoorTriggers();
-                    myPortalTrigger = false;
+                    ResetDoorTriggers();                    
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("                           ");
+                    Console.WriteLine("                             ");
                 }
             }
             else
@@ -322,8 +351,6 @@ namespace ConsoleRPG
                 else //Reset trigger
                 {
                     ResetDoorTriggers();
-                    myRoomPortalTrigger = false;
-                    myChestTrigger = false;
                     Utilities.Cursor(myTextFeedBackPosition);
                     Console.Write("                                               ");
                     Utilities.Cursor(myTextFeedBackPosition.Down());
@@ -357,7 +384,7 @@ namespace ConsoleRPG
 
         }
 
-        void TryEnterDoor()
+        void UseActionButton()
         {
 
             if (GetTriggeredDoor(out int doorID, out DoorDirections doorToEnter))
@@ -400,6 +427,11 @@ namespace ConsoleRPG
                 if (myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID != 0)
                 {
                     myPlayer.myKeyIDs.Add(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID, KeyIDToText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID));
+                    if (myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID == 1)
+                    {
+                        myTavern.myFirstKey = false;
+                        myTavern.mySecondKey = true;
+                    }
                 }
                 DisplayPickUpText(myRoomsByID[myPlayer.myCurrentRoom].myChest.myKeyID, hasItem ? item.myTitle : null);                
                 myPlayer.PickUpItem(item.myStat);
@@ -411,6 +443,13 @@ namespace ConsoleRPG
                 {
                     myPlayer.myCurrentMP = myPlayer.myMaxMP;
                 }
+            }
+            if (myTavernDoorTrigger)
+            {
+                myTavernDoorTrigger = false;
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myTavern.EnterTavern();
+                EnterRoom(myPlayerPositionBeforeBattle);
             }
         }
 
@@ -501,9 +540,9 @@ namespace ConsoleRPG
             }
             else if (input.Key == ConsoleKey.Enter)
             {
-                TryEnterDoor();
+                UseActionButton();
             }
-            else if (input.Key == ConsoleKey.F1 && myPlayer.myCurrentRoom != 0)//Change key?
+            else if (input.Key == ConsoleKey.F1 && myPlayer.myCurrentRoom != 0)
             {
                 SoundManager.PlaySound(SoundType.PortalCast);
                 Thread.Sleep(2000);
@@ -523,12 +562,6 @@ namespace ConsoleRPG
             else if (input.Key == ConsoleKey.F2)//Debug
             {
                 StartBattle();
-            }
-            else if (input.Key == ConsoleKey.Spacebar)
-            {
-                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
-                myTavern.EnterTavern();
-                EnterRoom(myPlayerPositionBeforeBattle);
             }
         }
 
@@ -558,8 +591,6 @@ namespace ConsoleRPG
 
         void StartBattle()
         {
-            List<Actor> battleList = new List<Actor>();
-
             Actors enemyOne = Actors.NULL;
             Actors enemyTwo = Actors.NULL;
             Actors enemyThree = Actors.NULL;
@@ -592,7 +623,7 @@ namespace ConsoleRPG
                 }
             }
 
-            battleList = myEnemyFactory.GetBattleList(enemyOne, enemyTwo, enemyThree);
+            List<Actor> battleList = myEnemyFactory.GetBattleList(enemyOne, enemyTwo, enemyThree);
             if (battleList != null)
             {
                 myBattleMode = true;
@@ -620,6 +651,7 @@ namespace ConsoleRPG
             if(myPlayer.myCurrentHP > 0)
             {
                 myRoomsByID[myPlayer.myCurrentRoom].myRoomCleared = true;
+                //If won whole game winning screen
                 EnterRoom(myPlayerPositionBeforeBattle);
             }
             else
