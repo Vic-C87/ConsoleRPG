@@ -26,7 +26,8 @@ namespace ConsoleRPG
         Vector2 myEnterToContinuePosition;
         readonly Action myContinueAction;
         readonly List<string> myTextList = new List<string>();
-        readonly List<string> myPrologue; 
+        readonly List<string> myPrologue;
+        readonly List<string> myEndPrologue;
 
         public FarmScene()
         {
@@ -44,8 +45,9 @@ namespace ConsoleRPG
             myOffSet = new Vector2(Console.WindowWidth / 2 - myScene.GetLength(0) / 2, Console.WindowHeight / 2 - myScene.GetLength(1) / 2);
             myContinueAction = () => EnterToContinue();
             myPrologue = Utilities.GetPrologue(@"Dialogues\Prologue.txt");
+            myEndPrologue = Utilities.GetPrologue(@"Dialogues\EndPrologue.txt");
             myTextList.Add("Mother? Father? Where are you?.... Nooo, Father!");
-            myTextList.Add("Father! What has he done to you? *Crying*");
+            myTextList.Add("Father! What have they done to you? *Crying*");
             myTextList.Add("Noo not you as well mother! *Crying* I swear I will AVENGE YOU!");
             myTextList.Add("You can not hide from me! I will find you and make you pay if it's the last thing I do!");
         }
@@ -53,7 +55,7 @@ namespace ConsoleRPG
         public void DrawScene()
         {
             SoundManager.PlaySound(SoundType.VillageAmbience, true);//EDIT!!!
-            Prologue();
+            Prologue(myPrologue);
 
             //Initiate player position and set startposition 
             myPlayer.MyPosition  = myStartPosition = new Vector2(myOffSet.X - myPlayer.MyWidth, myOffSet.Y + 24);
@@ -135,27 +137,28 @@ namespace ConsoleRPG
             myTextIndex++;
             PrintText(myTextIndex);
             Utilities.ActionByInput(myContinueAction, ConsoleKey.Enter);
-            
-            //Screen with explanation of story
+
+            Console.Clear();
+            Prologue(myEndPrologue);
         }
 
-        void Prologue()
+        void Prologue(List<string> someText)
         {
             Vector2 leftFramePosition = new Vector2(Console.WindowWidth/2 - myTopFrame.GetLength(0)/2 - 2, Console.WindowHeight/2 - myVerticalFrame.GetLength(1)/2);
             Vector2 rightFramePosition = leftFramePosition.Right(89 + myVerticalFrame.GetLength(0));
             Vector2 bottomFramePosition = leftFramePosition.Down(myVerticalFrame.GetLength(1) - 1);
             Vector2 topFramePosition = leftFramePosition.Up(3);
-            Vector2 textPosition = new Vector2(leftFramePosition.X + 6, Console.WindowHeight / 2 - myPrologue.Count / 2 - 1);
+            Vector2 textPosition = new Vector2(leftFramePosition.X + 6, Console.WindowHeight / 2 - someText.Count / 2 - 1);
 
             Utilities.DrawSprite(myVerticalFrame, leftFramePosition, ConsoleColor.DarkYellow);
             Utilities.DrawSprite(myVerticalFrame, rightFramePosition, ConsoleColor.DarkYellow);
             Utilities.DrawSprite(myBottomFrame, bottomFramePosition, ConsoleColor.DarkYellow);
             Utilities.DrawSprite(myTopFrame, topFramePosition, ConsoleColor.DarkYellow);
 
-            for (int i = 0; i < myPrologue.Count; i++)
+            for (int i = 0; i < someText.Count; i++)
             {
                 Utilities.Cursor(textPosition);
-                Utilities.Typewriter(myPrologue[i], 25);
+                Utilities.Typewriter(someText[i], 25);
                 textPosition = textPosition.Down();
             }
             textPosition = textPosition.Right(10);

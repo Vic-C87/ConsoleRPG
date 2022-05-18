@@ -27,6 +27,7 @@ namespace ConsoleRPG
         bool myRoomPortalTrigger = false;
 
         bool myTavernDoorTrigger = false;
+        bool myHealerDoorTrigger = false;
 
         bool myChestTrigger = false;
         bool myPickUpText = false;
@@ -49,16 +50,17 @@ namespace ConsoleRPG
         readonly GameManager myGameManager;
         readonly SpellFactory mySpellFactory;
         readonly ItemFactory myItemFactory;
-        readonly EnemyFactory myEnemyFactory;
+        readonly EnemyFactory myEnemyFactory;        
 
         char[,] myDoorLockSprite;
+        readonly char[,] myMansionSprite;
 
         Vector2 myTextFeedBackPosition = new Vector2();
 
         Vector2 myBaseRoomSize = new Vector2(105, 25);
         readonly Tavern myTavern;
         readonly FarmScene myFarmScene;
-        
+        readonly Healer myHealer;
 
         public GameManager()
         {
@@ -76,6 +78,8 @@ namespace ConsoleRPG
             myPortal = new TownPortal();
             myTavern = new Tavern();
             myFarmScene = new FarmScene();
+            myHealer = new Healer();
+            myMansionSprite = Utilities.ReadFromFile(@"Sprites\Mansion.txt", out _);
             SoundManager.LoadSounds();
 
             Console.CursorVisible = false;
@@ -142,6 +146,7 @@ namespace ConsoleRPG
             myChestTrigger = false;
             myTavernDoorTrigger = false;
             myPortalTrigger = false;
+            myHealerDoorTrigger = false;
         }
 
         void SetHasDoors()
@@ -183,10 +188,15 @@ namespace ConsoleRPG
                 myMansionAmbiencePlaying = false;
                 
                 anEntryPoint = DoorDirections.North;
+                
             }
             ResetHasDoors();
             Console.Clear();
             myRoomsByID[myPlayer.myCurrentRoom].DrawRoom(myDrawRoomOffSet);
+            if (myPlayer.myCurrentRoom == 0)
+            {
+                Utilities.DrawSprite(myMansionSprite, myDrawRoomOffSet.Right(myRoomsByID[myPlayer.myCurrentRoom].myRoomMap.GetLength(0)));
+            }
             PlaceLocks();
             SetHasDoors();
             if (myGameStart)
@@ -276,6 +286,10 @@ namespace ConsoleRPG
             SetHasDoors();
             myPlayer.myGameObject.DrawSprite(aPlayerSpawnPosition);
             DisplayPortal();
+            if (myPlayer.myCurrentRoom == 0)
+            {
+                Utilities.DrawSprite(myMansionSprite, myDrawRoomOffSet.Right(myRoomsByID[myPlayer.myCurrentRoom].myRoomMap.GetLength(0)));
+            }
         }
 
         void CheckTrigger(GameObject aGameObject)
@@ -288,7 +302,7 @@ namespace ConsoleRPG
                 {
                     myDoorTriggerActivated[DoorDirections.East] = true;
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("Press \'Enter\' to use door");
+                    Console.WriteLine("Press \'Enter\' to enter mansion");
                 }
                 else if (myPortalPlaced && yPosition == myDrawRoomOffSet.Y + 11 && (xPosition == myDrawRoomOffSet.X + 2 || xPosition == myDrawRoomOffSet.X + 3 || xPosition == myDrawRoomOffSet.X + 4 || xPosition == myDrawRoomOffSet.X + 5))
                 {
@@ -302,11 +316,18 @@ namespace ConsoleRPG
                     Utilities.Cursor(myTextFeedBackPosition);
                     Console.WriteLine("Press \'Enter\' to enter Tavern");
                 }
+                else if (yPosition == myDrawRoomOffSet.Y + 11 && (xPosition == myDrawRoomOffSet.X + 58 || xPosition == myDrawRoomOffSet.X + 59 || xPosition == myDrawRoomOffSet.X + 60 || xPosition == myDrawRoomOffSet.X + 61))
+                {
+                    myHealerDoorTrigger = true;
+                    Utilities.Cursor(myTextFeedBackPosition);
+                    Console.WriteLine("Press \'Enter\' to enter Healer");
+
+                }
                 else //Reset trigger
                 {
                     ResetDoorTriggers();                    
                     Utilities.Cursor(myTextFeedBackPosition);
-                    Console.WriteLine("                             ");
+                    Console.WriteLine("                              ");
                 }
             }
             else
@@ -451,6 +472,16 @@ namespace ConsoleRPG
                 myTavern.EnterTavern();
                 EnterRoom(myPlayerPositionBeforeBattle);
             }
+            if (myHealerDoorTrigger)
+            {
+                myHealerDoorTrigger = false;
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myPlayer.myCurrentHP = myPlayer.myBaseHP;
+                myPlayer.myCurrentMP = myPlayer.myMaxMP;
+                myHealer.EnterHealer();
+                EnterRoom(myPlayerPositionBeforeBattle);
+            }
+
         }
 
         string GetNextRoomName(DoorDirections aDirection)
@@ -563,6 +594,10 @@ namespace ConsoleRPG
             {
                 StartBattle();
             }
+            else if (input.Key == ConsoleKey.Spacebar)
+            {
+                
+            }
         }
 
         Vector2 GetSpawnPointFromDoorDirection(DoorDirections anEntryPoint)
@@ -651,8 +686,11 @@ namespace ConsoleRPG
             if(myPlayer.myCurrentHP > 0)
             {
                 myRoomsByID[myPlayer.myCurrentRoom].myRoomCleared = true;
-                //If won whole game winning screen
                 EnterRoom(myPlayerPositionBeforeBattle);
+                if (myPlayer.myCurrentRoom == 14)
+                {
+                    Win();
+                }
             }
             else
             {
@@ -725,6 +763,24 @@ namespace ConsoleRPG
             myDrawRoomOffSet = new Vector2(x, y);
 
             myTextFeedBackPosition = new Vector2(myDrawRoomOffSet.X + 4, myDrawRoomOffSet.Y - 4);
+        }
+        
+        void Win()
+        {
+            Vector2 position = new Vector2(myDrawRoomOffSet.X + myBaseRoomSize.X / 2, myDrawRoomOffSet.Y + myBaseRoomSize.Y / 2);
+            Utilities.Cursor(position);
+            Utilities.Color("You won!", ConsoleColor.DarkYellow);
+            Utilities.Cursor(position.Down());
+            if (myPlayer.myDeathCounter == 1)
+            {               
+                Utilities.Typewriter("You've died ONE time in the mansion.", 50, ConsoleColor.DarkRed);
+            }
+            else
+            {
+                Utilities.Typewriter($"You've died {myPlayer.myDeathCounter} times in the mansion.", 50, ConsoleColor.DarkRed);
+            }
+            myGameRunning = false;
+            Utilities.ActionByInput(() => Console.Clear(), ConsoleKey.Enter);
         }
     }
 }

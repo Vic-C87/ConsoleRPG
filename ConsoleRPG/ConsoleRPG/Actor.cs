@@ -122,15 +122,16 @@ namespace ConsoleRPG
             return myDamage;
         }
 
-        public void TakeDamage(int someDamage)
+        public void TakeDamage(int someDamage, out int someDamageMade)
         {
             if (myIsPlayer)
             {
-
-                myHP -= TryBlock(someDamage);
+                someDamageMade = TryBlock(someDamage);
+                myHP -= someDamageMade;
             }
             else
             {
+                someDamageMade = someDamage;
                 myHP -= someDamage;
                 AnimateHurt();
 

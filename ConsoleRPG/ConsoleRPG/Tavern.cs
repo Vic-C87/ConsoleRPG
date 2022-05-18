@@ -30,6 +30,15 @@ namespace ConsoleRPG
         public void EnterTavern()
         {
             Console.Clear();
+            if (myFirstVisit)
+            {
+                Utilities.Cursor(myOffSet.Up(5));
+                Utilities.Typewriter("After arriving at the village the soldier decides to rest up in the tavern before continuing on towards the mansion.", 50);
+                Utilities.Cursor(myOffSet.Up(3));
+                Console.Write("(Press \'Enter\' to continue)");
+                Utilities.ActionByInput(() => EmptyMethod(), ConsoleKey.Enter);
+                Console.Clear();
+            }
             Utilities.DrawSprite(mySprite, myOffSet);
 
             if (!myFirstVisit && mySecondKey)
@@ -43,10 +52,24 @@ namespace ConsoleRPG
             if (myFirstVisit)
             {
                 Talk(myBartender, Quest.EnterTavern);
-                //Screen with story of barman
+                Utilities.ActionByInput(() => EmptyMethod(), ConsoleKey.Enter);
+                Console.Clear();
+                List<string> tavernOne = Utilities.GetPrologue(@"Dialogues\TavernOne.txt");
+                PrintRollingText(tavernOne, myOffSet);
+                
                 myFirstVisit = false;
             }
+        }
+
+        static void PrintRollingText(List<string> someText, Vector2 anOffSet)
+        {
+            for (int i = 0; i < someText.Count; i++)
+            {
+                Utilities.Cursor(anOffSet.Down(i));
+                Utilities.Typewriter(someText[i], 50);
+            }
             Utilities.ActionByInput(() => EmptyMethod(), ConsoleKey.Enter);
+            Console.Clear();
         }
 
         void Talk(NPC anNPC, Quest aQuest)

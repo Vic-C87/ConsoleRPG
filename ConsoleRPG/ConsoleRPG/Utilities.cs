@@ -369,13 +369,15 @@ namespace ConsoleRPG
             return (Actors)enemyEnumIndex;
         }
 
-        public static void Typewriter(string aString, int aPauseBetweenLettersInMS)
+        public static void Typewriter(string aString, int aPauseBetweenLettersInMS, ConsoleColor aColor = ConsoleColor.White)
         {
+            Console.ForegroundColor = aColor;
             for(int i = 0; i < aString.Length; i++)
             {
                 Console.Write(aString[i]);
                 Thread.Sleep(aPauseBetweenLettersInMS);
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 

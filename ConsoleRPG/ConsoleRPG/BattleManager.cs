@@ -162,7 +162,6 @@ namespace ConsoleRPG
             {
                 Utilities.Color("~", ConsoleColor.DarkRed);
             }
-            //framePos = framePos.Down();
             Utilities.Cursor(framePos.Down(38));
             for (int i = 0; i < xFrameLenght; i++)
             {
@@ -171,12 +170,10 @@ namespace ConsoleRPG
             Console.ForegroundColor = ConsoleColor.DarkRed;
             for (int i = 0; i < 39; i++)
             {
-
                 Utilities.Draw(framePos.X, framePos.Down(i).Y, '§');
                 Utilities.Draw(framePos.X + xFrameLenght, framePos.Down(i).Y, '§');
             }
             Console.ForegroundColor = ConsoleColor.White;
-
 
             DrawEnemies();
             myPlayer.DrawSprite(myPlayerSpritePosition);
@@ -260,6 +257,7 @@ namespace ConsoleRPG
             {
                 GetSelectionInput(myActionSelectorPositions, 3, FrameType.ActionFrame,ref selectIndex, ref mySelectAction, out _);
             }
+            ClearDisplayDamage();
             actionSelected = (Actions)selectIndex;
             if (selectIndex == 0)
             {
@@ -396,6 +394,19 @@ namespace ConsoleRPG
             }            
         }
 
+        void ClearDisplayDamage()
+        {
+            Utilities.CursorPosition(myCoolDownText.X, myOffSet.Y + 39);
+            Console.Write("                                         ");
+        }
+
+        void DisplayDamage(string anAttackersName, int someDamageMade)
+        {
+            ClearDisplayDamage();
+            Utilities.CursorPosition(myCoolDownText.X, myOffSet.Y + 39);
+            Console.Write($"{anAttackersName} attacked you for {someDamageMade} damage.");
+        }
+
         void SetTurnList()
         {
             Dictionary<int, int> waitingSinceCooldown = new Dictionary<int, int>();
@@ -494,7 +505,11 @@ namespace ConsoleRPG
 
         void Attack(Actor anAttacker,Actor aTarget)
         {
-            aTarget.TakeDamage(anAttacker.Attack());
+            aTarget.TakeDamage(anAttacker.Attack(), out int damageMade);
+            if (aTarget.myIsPlayer)
+            {
+                DisplayDamage(anAttacker.myName, damageMade);
+            }
             if (aTarget.myHP < 1 && !aTarget.myIsPlayer)
             {
                 aTarget.Die();
