@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ConsoleRPG
 {
     internal class Door
@@ -41,7 +36,7 @@ namespace ConsoleRPG
 		{
 			if (myLocked)
 			{
-				if (Unlock(aKeyID)) //Add unlock check
+				if (Unlock(aKeyID))
 				{
 					myLocked = false;
 					unlocked = true;

@@ -6,10 +6,8 @@ namespace ConsoleRPG
         public string mySpellName;
         public SpellType mySpellType;
         public SoundType mySpellSound;
-        //public int mySpellID;
         public int myDamage;
         public int myManaCost;
-        //public char[,] myCastSprite;
 
         public Spell(string aSpellName, SpellType aSpellType, SoundType aSoundType, int someDamage, int aManaCost)
         {

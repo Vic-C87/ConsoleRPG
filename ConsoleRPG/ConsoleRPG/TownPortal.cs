@@ -10,7 +10,7 @@ namespace ConsoleRPG
         public TownPortal()
         {
             myOriginRoomID = 0;
-            mySprite = Utilities.ReadFromFile(@"Sprites\Portal.txt", out string aTitle);
+            mySprite = Utilities.ReadFromFile(@"Sprites\Portal.txt", out _);
             myIsPlaced = false;
         }
 

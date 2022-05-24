@@ -371,11 +371,26 @@ namespace ConsoleRPG
 
         public static void Typewriter(string aString, int aPauseBetweenLettersInMS, ConsoleColor aColor = ConsoleColor.White)
         {
+            ConsoleKeyInfo input;
+            bool typeWrite = true;
             Console.ForegroundColor = aColor;
             for(int i = 0; i < aString.Length; i++)
             {
                 Console.Write(aString[i]);
-                Thread.Sleep(aPauseBetweenLettersInMS);
+                if(typeWrite)
+                {
+                    Thread.Sleep(aPauseBetweenLettersInMS);
+
+                }
+                if (Console.KeyAvailable)
+                {
+                    input = Console.ReadKey(true);
+                    if (input.Key == ConsoleKey.Enter)
+                    {
+                        typeWrite = false;
+                    }
+
+                }
             }
             Console.ForegroundColor = ConsoleColor.White;
         }

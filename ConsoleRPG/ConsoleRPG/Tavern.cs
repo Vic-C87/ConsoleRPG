@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
@@ -59,6 +56,7 @@ namespace ConsoleRPG
                 
                 myFirstVisit = false;
             }
+            Utilities.ActionByInput(() => EmptyMethod(), ConsoleKey.Enter);
         }
 
         static void PrintRollingText(List<string> someText, Vector2 anOffSet)

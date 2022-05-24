@@ -118,6 +118,8 @@ namespace ConsoleRPG
             else
             {
                 SoundManager.PlaySound(SoundType.PlayerHurt, false, true);
+                
+                
             }
             return myDamage;
         }

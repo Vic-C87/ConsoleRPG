@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ConsoleRPG
 {
     internal class EnemyFactory
     {
-        Dictionary<Actors, Actor> myEnemies = new Dictionary<Actors, Actor>();
+        readonly Dictionary<Actors, Actor> myEnemies = new Dictionary<Actors, Actor>();
 
 
         public EnemyFactory()

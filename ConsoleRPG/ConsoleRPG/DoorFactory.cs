@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ConsoleRPG
 {
     internal class DoorFactory
     {
-		Dictionary<int, Door> myDoors;
+        readonly Dictionary<int, Door> myDoors;
 
 		public DoorFactory()
 		{

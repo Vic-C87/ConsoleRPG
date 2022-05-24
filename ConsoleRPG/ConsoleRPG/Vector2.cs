@@ -1,5 +1,4 @@
 ﻿
-
 namespace ConsoleRPG
 {
     internal struct Vector2

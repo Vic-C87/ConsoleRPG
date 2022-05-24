@@ -310,7 +310,10 @@ namespace ConsoleRPG
                 else
                 {
                     Utilities.Cursor(myFeedbackText);
-                    Utilities.Color("Not enough MANA", ConsoleColor.Blue);
+                    if (!goBack)
+                    {
+                        Utilities.Color("Not enough MANA", ConsoleColor.Blue);
+                    }
                     Thread.Sleep(1000);
                     Utilities.Cursor(myFeedbackText);
                     Console.Write("               ");
@@ -505,10 +508,17 @@ namespace ConsoleRPG
 
         void Attack(Actor anAttacker,Actor aTarget)
         {
+            if (!anAttacker.myIsPlayer)
+            {
+                anAttacker.ClearSprite(anAttacker.myBattlePosition);
+                anAttacker.DrawSprite(anAttacker.myBattlePosition.Down());
+            }
             aTarget.TakeDamage(anAttacker.Attack(), out int damageMade);
             if (aTarget.myIsPlayer)
             {
                 DisplayDamage(anAttacker.myName, damageMade);
+                anAttacker.ClearSprite(anAttacker.myBattlePosition);
+                anAttacker.DrawSprite(anAttacker.myBattlePosition.Up());
             }
             if (aTarget.myHP < 1 && !aTarget.myIsPlayer)
             {

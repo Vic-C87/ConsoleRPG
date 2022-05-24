@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
     internal class DisplayStats
     {
-        bool myActive = false;
         Vector2 myStatsOffSet;
         Vector2 myKeysOffSet;
         public DisplayStats()
@@ -19,7 +15,6 @@ namespace ConsoleRPG
 
         public void ShowStats(Player aPlayer)
         {
-            myActive = true;
             Console.Clear();
             Utilities.CursorPosition(myStatsOffSet.X, 0);
             Console.Write("Move around with the arrow keys");
@@ -50,22 +45,11 @@ namespace ConsoleRPG
                     Utilities.Color(key.Value, ConsoleColor.DarkYellow);
                 }
             }
+            Utilities.ActionByInput(() => CloseStats(), ConsoleKey.Tab);
+        }
 
-            ConsoleKeyInfo input;
-            while (Console.KeyAvailable)
-                Console.ReadKey(false);
-
-            input = Console.ReadKey(true);
-            while (myActive)
-            {
-
-                if (input.Key == ConsoleKey.Tab || input.Key == ConsoleKey.Escape)
-                {
-                    myActive = false;
-                }
-
-            }
-            
+        static void CloseStats()
+        {
             Console.Clear();
         }
     }

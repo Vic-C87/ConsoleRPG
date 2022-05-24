@@ -110,10 +110,8 @@ namespace ConsoleRPG
             myDoorsByID = doorFactory.GetDoors();
             
             myPlayer = new Player(ReadSpriteFromFile(@"Sprites\Man.txt"), myPlayerBaseHP);
-            //myPlayerGold = 0;
             myDisplayStats = new DisplayStats();
             myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.LightningBolt));
-            myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.Fireball));
 
             myHaveDoors.Add(DoorDirections.West, false);
             myHaveDoors.Add(DoorDirections.North, false);

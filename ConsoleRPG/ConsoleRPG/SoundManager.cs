@@ -8,60 +8,35 @@ namespace ConsoleRPG
     {
         static Dictionary<SoundType, SoundPlayer> mySounds;
 
-        static SoundPlayer myBatHitPlayer;
-        static SoundPlayer myPlayerHitPlayer;
-        static SoundPlayer myBattleStartPlayer;
-        static SoundPlayer myHealEffectPlayer;
-        static SoundPlayer myBatLightningHitPlayer;
-        static SoundPlayer myBattleVictoryPlayer;
-        static SoundPlayer myMansionAmbiencePlayer;
-        static SoundPlayer myVillageAmbiencePlayer;
-        static SoundPlayer myPortalCastPlayer;
-        static SoundPlayer myOpenChestPlayer;
-        static SoundPlayer myGetKeyPlayer;
-        static SoundPlayer myBattleLostPlayer;
-
         public static void LoadSounds()
         {
             if (OperatingSystem.IsWindows())
             {
                 mySounds = new Dictionary<SoundType, SoundPlayer>();
 
-                myMansionAmbiencePlayer = new SoundPlayer(@"Audio\mansionAmbience.wav");
-                mySounds.Add(SoundType.MansionAmbience, myMansionAmbiencePlayer);
+                mySounds.Add(SoundType.MansionAmbience, new SoundPlayer(@"Audio\mansionAmbience.wav"));
 
-                myVillageAmbiencePlayer = new SoundPlayer(@"Audio\villageAmbience.wav");
-                mySounds.Add(SoundType.VillageAmbience, myVillageAmbiencePlayer);
+                mySounds.Add(SoundType.VillageAmbience, new SoundPlayer(@"Audio\villageAmbience.wav"));
 
-                myBatHitPlayer = new SoundPlayer(@"Audio\batHit.wav");
-                mySounds.Add(SoundType.EnemyHurt, myBatHitPlayer);
+                mySounds.Add(SoundType.EnemyHurt, new SoundPlayer(@"Audio\batHit.wav"));
                 
-                myPlayerHitPlayer = new SoundPlayer(@"Audio\playerHit.wav");
-                mySounds.Add(SoundType.PlayerHurt, myPlayerHitPlayer);
+                mySounds.Add(SoundType.PlayerHurt, new SoundPlayer(@"Audio\playerHit.wav"));
                 
-                myBattleStartPlayer = new SoundPlayer(@"Audio\battleStart.wav");
-                mySounds.Add(SoundType.BattleStart, myBattleStartPlayer);
+                mySounds.Add(SoundType.BattleStart, new SoundPlayer(@"Audio\battleStart.wav"));
                 
-                myHealEffectPlayer = new SoundPlayer(@"Audio\healEffect.wav");
-                mySounds.Add(SoundType.Heal, myHealEffectPlayer);
+                mySounds.Add(SoundType.Heal, new SoundPlayer(@"Audio\healEffect.wav"));
                 
-                myBatLightningHitPlayer = new SoundPlayer(@"Audio\batLightningHit.wav");
-                mySounds.Add(SoundType.LighningHurt, myBatLightningHitPlayer);
+                mySounds.Add(SoundType.LighningHurt, new SoundPlayer(@"Audio\batLightningHit.wav"));
                 
-                myBattleVictoryPlayer = new SoundPlayer(@"Audio\battleVictory.wav");
-                mySounds.Add(SoundType.BattleVictory, myBattleVictoryPlayer);
+                mySounds.Add(SoundType.BattleVictory, new SoundPlayer(@"Audio\battleVictory.wav"));
 
-                myPortalCastPlayer = new SoundPlayer(@"Audio\portalEffect.wav");
-                mySounds.Add(SoundType.PortalCast, myPortalCastPlayer);
+                mySounds.Add(SoundType.PortalCast, new SoundPlayer(@"Audio\portalEffect.wav"));
 
-                myOpenChestPlayer = new SoundPlayer(@"Audio\chestOpenEffect.wav");
-                mySounds.Add(SoundType.OpenChest, myOpenChestPlayer);
+                mySounds.Add(SoundType.OpenChest, new SoundPlayer(@"Audio\chestOpenEffect.wav"));
 
-                myGetKeyPlayer = new SoundPlayer(@"Audio\recieveKeyEffect.wav");
-                mySounds.Add(SoundType.GetKey, myGetKeyPlayer);
+                mySounds.Add(SoundType.GetKey, new SoundPlayer(@"Audio\recieveKeyEffect.wav"));
 
-                myBattleLostPlayer = new SoundPlayer(@"Audio\battleLost.wav");
-                mySounds.Add(SoundType.BattleLost, myBattleLostPlayer);
+                mySounds.Add(SoundType.BattleLost, new SoundPlayer(@"Audio\battleLost.wav"));
             }
         }
         public static void PlaySound(SoundType aSoundType, bool aPlayLooping = false, bool aPlaySynced = false)
