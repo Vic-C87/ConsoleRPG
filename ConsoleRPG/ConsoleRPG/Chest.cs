@@ -38,7 +38,6 @@ namespace ConsoleRPG
         public UpgradeType OpenChest()
         {
             myIsOpened = true;
-            SoundManager.PlaySound(SoundType.OpenChest, false, true);
             for (int y = 0; y < mySprite.GetLength(1); y++)
             {
                 for (int x = 0; x < mySprite.GetLength(0); x++)
@@ -49,10 +48,6 @@ namespace ConsoleRPG
                     }
                 }
             }            
-            SoundManager.PlaySound(SoundType.GetKey, false, true);
-            
-            SoundManager.PlaySound(SoundType.MansionAmbience, true);
-
             return myItem;
         }
     }

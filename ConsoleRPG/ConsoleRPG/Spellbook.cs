@@ -19,7 +19,6 @@ namespace ConsoleRPG
 
         public void UseSpell(int aSpellIndex, Actor aTarget)
         {
-            SoundManager.PlaySound(mySpells[aSpellIndex].mySpellSound);
             aTarget.TakeDamage(mySpells[aSpellIndex].myDamage, out _);
         }
 

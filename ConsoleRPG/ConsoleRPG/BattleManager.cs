@@ -105,7 +105,6 @@ namespace ConsoleRPG
             if (myPlayerStillAlive)
             {
                 Console.Write("Victory!");
-                SoundManager.PlaySound(SoundType.BattleVictory);
             }
             else
             {
@@ -113,7 +112,6 @@ namespace ConsoleRPG
                 Utilities.Cursor(myEndBattleText.Down());
                 Console.Write("You will respawn in the village.");
                 aPlayerReference.myDeathCounter++;
-                SoundManager.PlaySound(SoundType.BattleLost);
             }
             Utilities.Cursor(myEndBattleText.Down(2));
             Utilities.PressEnterToContinue();
@@ -179,7 +177,6 @@ namespace ConsoleRPG
             myPlayer.DrawSprite(myPlayerSpritePosition);
             UpdateHPDisplayed(myPlayer);
             DisplayCooldown();
-            SoundManager.PlaySound(SoundType.BattleStart);
         }
 
         void DrawEnemies()
@@ -517,6 +514,7 @@ namespace ConsoleRPG
             if (aTarget.myIsPlayer)
             {
                 DisplayDamage(anAttacker.myName, damageMade);
+                Thread.Sleep(200);
                 anAttacker.ClearSprite(anAttacker.myBattlePosition);
                 anAttacker.DrawSprite(anAttacker.myBattlePosition.Up());
             }

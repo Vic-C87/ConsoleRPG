@@ -51,7 +51,6 @@ namespace ConsoleRPG
 
         public void DrawScene()
         {
-            SoundManager.PlaySound(SoundType.VillageAmbience, true);//EDIT!!!
             Prologue(myPrologue);
 
             //Initiate player position and set startposition 

@@ -111,16 +111,6 @@ namespace ConsoleRPG
 
         public int Attack()
         {
-            if (myIsPlayer)
-            {
-                SoundManager.PlaySound(SoundType.EnemyHurt);
-            }
-            else
-            {
-                SoundManager.PlaySound(SoundType.PlayerHurt, false, true);
-                
-                
-            }
             return myDamage;
         }
 
@@ -161,7 +151,6 @@ namespace ConsoleRPG
 
         public void Heal(int aHealAmount)
         {
-            SoundManager.PlaySound(SoundType.Heal, false, true);
             myHP += aHealAmount;
             if (myHP > myMaxHP)
             {

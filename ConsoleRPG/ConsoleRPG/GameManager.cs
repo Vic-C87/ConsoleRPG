@@ -80,7 +80,6 @@ namespace ConsoleRPG
             myFarmScene = new FarmScene();
             myHealer = new Healer();
             myMansionSprite = Utilities.ReadFromFile(@"Sprites\Mansion.txt", out _);
-            SoundManager.LoadSounds();
 
             Console.CursorVisible = false;
             myFarmScene.DrawScene();
@@ -177,12 +176,10 @@ namespace ConsoleRPG
             }
             if (!myMansionAmbiencePlaying)
             {
-                SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myMansionAmbiencePlaying = true;
             }
             if (myPlayer.myCurrentRoom == 0)
             {
-                SoundManager.PlaySound(SoundType.VillageAmbience, true);
                 myMansionAmbiencePlaying = false;
                 
                 anEntryPoint = DoorDirections.North;
@@ -274,7 +271,6 @@ namespace ConsoleRPG
         {
             if (!myMansionAmbiencePlaying && myPlayer.myCurrentRoom != 0)
             {
-                SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myMansionAmbiencePlaying = true;
             }
             ResetHasDoors();
@@ -573,10 +569,8 @@ namespace ConsoleRPG
             }
             else if (input.Key == ConsoleKey.F1 && myPlayer.myCurrentRoom != 0)
             {
-                SoundManager.PlaySound(SoundType.PortalCast);
                 Thread.Sleep(2000);
                 myPortal.PlacePortal(myPlayer.myCurrentRoom, new Vector2(myDrawRoomOffSet.X + 77, myDrawRoomOffSet.Y + 2));
-                SoundManager.PlaySound(SoundType.MansionAmbience, true);
                 myPortalPlaced = true;
                 myPortalRoom = myPlayer.myCurrentRoom;
             }           
