@@ -12,6 +12,7 @@ namespace ConsoleRPG
                 Console.BufferWidth = Console.WindowWidth;
                 Console.BufferHeight = Console.WindowHeight;
             }
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
             Console.CursorVisible = false;
             Console.SetCursorPosition(0, 0);
