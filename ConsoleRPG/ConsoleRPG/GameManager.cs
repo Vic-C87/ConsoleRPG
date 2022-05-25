@@ -79,7 +79,7 @@ namespace ConsoleRPG
             myTavern = new Tavern();
             myFarmScene = new FarmScene();
             myHealer = new Healer();
-            myMansionSprite = Utilities.ReadFromFile(@"Sprites\Mansion.txt", out _);
+            myMansionSprite = Utilities.ReadFromFile(@"Sprites/Mansion.txt", out _);
             SoundManager.LoadSounds();
 
             Console.CursorVisible = false;
@@ -109,7 +109,7 @@ namespace ConsoleRPG
             doorFactory.CreateDoors();
             myDoorsByID = doorFactory.GetDoors();
             
-            myPlayer = new Player(ReadSpriteFromFile(@"Sprites\Man.txt"), myPlayerBaseHP);
+            myPlayer = new Player(ReadSpriteFromFile(@"Sprites/Man.txt"), myPlayerBaseHP);
             myDisplayStats = new DisplayStats();
             myPlayer.mySpellbook.AddSpell(mySpellFactory.GetSpell(SpellType.LightningBolt));
 
@@ -122,7 +122,7 @@ namespace ConsoleRPG
             myDoorTriggerActivated.Add(DoorDirections.North, false);
             myDoorTriggerActivated.Add(DoorDirections.East, false);
             myDoorTriggerActivated.Add(DoorDirections.South, false);
-            myDoorLockSprite = Utilities.ReadFromFile(@"Sprites\Lock.txt", out _);
+            myDoorLockSprite = Utilities.ReadFromFile(@"Sprites/Lock.txt", out _);
             
         }
 

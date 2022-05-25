@@ -14,7 +14,7 @@ namespace ConsoleRPG
         {
             myItem = UpgradeType.Null;
             myKeyID = 0;
-            mySprite = Utilities.ReadFromFile(@"Sprites\Chest.txt", out _);
+            mySprite = Utilities.ReadFromFile(@"Sprites/Chest.txt", out _);
             myIsOpened = false;
             myOffSet = new Vector2();
         }

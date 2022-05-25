@@ -13,7 +13,7 @@ namespace ConsoleRPG
 
 		public void CreateRooms()
 		{
-			string rootRoomPath = @"Sprites\Rooms\";
+			string rootRoomPath = @"Sprites/Rooms/";
 			//first
 			Room newRoom = new Room("Village", "a small rustic village",
 					0, false,

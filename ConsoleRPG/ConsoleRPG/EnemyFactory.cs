@@ -9,23 +9,23 @@ namespace ConsoleRPG
 
         public EnemyFactory()
         {
-            Actor enemy = new Actor(Actors.Bat, @"Sprites\Bat.txt", 10, 3, 5000);
-            enemy.AddHitSprite(@"Sprites\BatDown.txt");
+            Actor enemy = new Actor(Actors.Bat, @"Sprites/Bat.txt", 10, 3, 5000);
+            enemy.AddHitSprite(@"Sprites/BatDown.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.Spider, @"Sprites\Spider.txt", 12, 5, 5000);
-            enemy.AddHitSprite(@"Sprites\SpiderHit.txt");
+            enemy = new Actor(Actors.Spider, @"Sprites/Spider.txt", 12, 5, 5000);
+            enemy.AddHitSprite(@"Sprites/SpiderHit.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.Dragon, @"Sprites\Dragon.txt", 15, 10, 7000);
-            enemy.AddHitSprite(@"Sprites\DragonHit.txt");
+            enemy = new Actor(Actors.Dragon, @"Sprites/Dragon.txt", 15, 10, 7000);
+            enemy.AddHitSprite(@"Sprites/DragonHit.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.EliteDragon, @"Sprites\EliteDragon.txt", 20, 10, 7000);
-            enemy.AddHitSprite(@"Sprites\EliteDragonHit.txt");
+            enemy = new Actor(Actors.EliteDragon, @"Sprites/EliteDragon.txt", 20, 10, 7000);
+            enemy.AddHitSprite(@"Sprites/EliteDragonHit.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.EvilLord, @"Sprites\Dracula.txt", 30, 20, 10000);
+            enemy = new Actor(Actors.EvilLord, @"Sprites/Dracula.txt", 30, 20, 10000);
             //Add hit sprite
             myEnemies.Add(enemy.myType, enemy);
         }
@@ -60,7 +60,7 @@ namespace ConsoleRPG
         public void AddNewEnemy(Actors anEnemyTypeForSprite, int someHP, int aDamage, int aCoolDown, bool aUseSameTypeTitle = true)
         {
             Actors type = aUseSameTypeTitle ? anEnemyTypeForSprite : Actors.Enemy;
-            string path = GetEnemy(anEnemyTypeForSprite) != null ? GetEnemy(anEnemyTypeForSprite).mySpritePath : @"Sprites\Enemy.txt";
+            string path = GetEnemy(anEnemyTypeForSprite) != null ? GetEnemy(anEnemyTypeForSprite).mySpritePath : @"Sprites/Enemy.txt";
             Actor newEnemy = new Actor(type, path, someHP, aDamage, aCoolDown);
             if (type != Actors.Enemy)
             {
