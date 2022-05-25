@@ -28,21 +28,21 @@ namespace ConsoleRPG
 
         public FarmScene()
         {
-            myScene = Utilities.ReadFromFile(@"Sprites\CutScene\FarmHouse.txt", out _);
+            myScene = Utilities.ReadFromFile(@"Sprites/CutScene/FarmHouse.txt", out _);
             mySpeed = 1;
-            char[,] playerSprite = Utilities.ReadFromFile(@"Sprites\Man.txt", out string title);
-            myKneelingMan = Utilities.ReadFromFile(@"Sprites\KneelingMan.txt", out _);
-            myFootPrintsA = Utilities.ReadFromFile(@"Sprites\FootPrintsA.txt", out _);
-            myFootPrintsB = Utilities.ReadFromFile(@"Sprites\FootPrintsB.txt", out _);
-            myFootPrintsC = Utilities.ReadFromFile(@"Sprites\FootPrintsC.txt", out _);
-            myVerticalFrame = Utilities.ReadFromFile(@"Sprites\VerticalFrame.txt", out _);
-            myBottomFrame = Utilities.ReadFromFile(@"Sprites\BottomFrame.txt", out _);
-            myTopFrame = Utilities.ReadFromFile(@"Sprites\TopFrame.txt", out _);
+            char[,] playerSprite = Utilities.ReadFromFile(@"Sprites/Man.txt", out string title);
+            myKneelingMan = Utilities.ReadFromFile(@"Sprites/KneelingMan.txt", out _);
+            myFootPrintsA = Utilities.ReadFromFile(@"Sprites/FootPrintsA.txt", out _);
+            myFootPrintsB = Utilities.ReadFromFile(@"Sprites/FootPrintsB.txt", out _);
+            myFootPrintsC = Utilities.ReadFromFile(@"Sprites/FootPrintsC.txt", out _);
+            myVerticalFrame = Utilities.ReadFromFile(@"Sprites/VerticalFrame.txt", out _);
+            myBottomFrame = Utilities.ReadFromFile(@"Sprites/BottomFrame.txt", out _);
+            myTopFrame = Utilities.ReadFromFile(@"Sprites/TopFrame.txt", out _);
             myPlayer = new GameObject(new Vector2(playerSprite.GetLength(0), playerSprite.GetLength(1)), title, playerSprite);
             myOffSet = new Vector2(Console.WindowWidth / 2 - myScene.GetLength(0) / 2, Console.WindowHeight / 2 - myScene.GetLength(1) / 2);
             myContinueAction = () => EnterToContinue();
-            myPrologue = Utilities.GetPrologue(@"Dialogues\Prologue.txt");
-            myEndPrologue = Utilities.GetPrologue(@"Dialogues\EndPrologue.txt");
+            myPrologue = Utilities.GetPrologue(@"Dialogues/Prologue.txt");
+            myEndPrologue = Utilities.GetPrologue(@"Dialogues/EndPrologue.txt");
             myTextList.Add("Mother? Father? Where are you?.... Nooo, Father!");
             myTextList.Add("Father! What have they done to you? *Crying*");
             myTextList.Add("Noo not you as well mother! *Crying* I swear I will AVENGE YOU!");

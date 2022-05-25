@@ -17,9 +17,9 @@ namespace ConsoleRPG
 
         public Tavern()
         {
-            mySprite = Utilities.ReadFromFile(@"Sprites\Rooms\Tavern.txt", out _);
-            myBartender = new NPC("Bartender", @"Dialogues\Villager1.txt");
-            myBartender.AddDialogue(Quest.FirstKey, @"Dialogues\FirstKey.txt");
+            mySprite = Utilities.ReadFromFile(@"Sprites/Rooms/Tavern.txt", out _);
+            myBartender = new NPC("Bartender", @"Dialogues/Villager1.txt");
+            myBartender.AddDialogue(Quest.FirstKey, @"Dialogues/FirstKey.txt");
             myOffSet = new Vector2(Console.WindowWidth / 2 - mySprite.GetLength(0) / 2, Console.WindowHeight/2 - mySprite.GetLength(1) / 2);
             myLineAction = () => PrintLine();
         }
@@ -51,7 +51,7 @@ namespace ConsoleRPG
                 Talk(myBartender, Quest.EnterTavern);
                 Utilities.ActionByInput(() => EmptyMethod(), ConsoleKey.Enter);
                 Console.Clear();
-                List<string> tavernOne = Utilities.GetPrologue(@"Dialogues\TavernOne.txt");
+                List<string> tavernOne = Utilities.GetPrologue(@"Dialogues/TavernOne.txt");
                 PrintRollingText(tavernOne, myOffSet);
                 
                 myFirstVisit = false;

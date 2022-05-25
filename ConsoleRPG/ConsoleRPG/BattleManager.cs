@@ -56,8 +56,8 @@ namespace ConsoleRPG
             myPlayerStillAlive = false;
             myEnemiesStillAlive = false;
             myStopWatch = new Stopwatch();
-            myVerticalFrame = Utilities.ReadFromFile(@"Sprites\BattleVerticalFrame.txt", out _);
-            myHorizontalLeftFrame = Utilities.ReadFromFile(@"Sprites\HorizontalLeftFrame.txt", out _);
+            myVerticalFrame = Utilities.ReadFromFile(@"Sprites/BattleVerticalFrame.txt", out _);
+            myHorizontalLeftFrame = Utilities.ReadFromFile(@"Sprites/HorizontalLeftFrame.txt", out _);
             myPlayerCoolDownCounter = 0;
             myOffSet = new Vector2(Console.WindowWidth / 8, Console.WindowHeight / 5);
 
@@ -108,7 +108,7 @@ namespace ConsoleRPG
             }
             else
             {
-                Console.Write("You Loose!");
+                Console.Write("You Lose!");
                 Utilities.Cursor(myEndBattleText.Down());
                 Console.Write("You will respawn in the village.");
                 aPlayerReference.myDeathCounter++;

@@ -12,7 +12,7 @@ namespace ConsoleRPG
                 Console.BufferWidth = Console.WindowWidth;
                 Console.BufferHeight = Console.WindowHeight;
             }
-
+            Console.Clear();
             Console.CursorVisible = false;
             Console.SetCursorPosition(0, 0);
             Utilities.Typewriter("Please maximize your console window for best game experience.", 50, ConsoleColor.DarkRed);

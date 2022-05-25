@@ -15,7 +15,7 @@ namespace ConsoleRPG
 
         public Healer()
         {
-            mySprite = Utilities.ReadFromFile(@"Sprites\Rooms\Healer.txt", out _);
+            mySprite = Utilities.ReadFromFile(@"Sprites/Rooms/Healer.txt", out _);
             myOffSet = new Vector2(Console.WindowWidth/2 - mySprite.GetLength(0)/2, Console.WindowHeight/2 - mySprite.GetLength(1)/2);
             myHealText = "You have regained your HP and MP.";
             myTextPosition = new Vector2(Console.WindowWidth / 2 - myHealText.Length / 2, myOffSet.Y - 2);
