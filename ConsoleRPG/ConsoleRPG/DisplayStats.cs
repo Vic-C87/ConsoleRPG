@@ -38,6 +38,11 @@ namespace ConsoleRPG
             Console.Write($"Damage:\t{aPlayer.myStat.myDamage}");
             Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 3);
             Console.Write($"Armor:\t{aPlayer.myStat.myArmor}");
+            if (aPlayer.myArcadeMode)
+            {
+                Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 5);
+                Console.Write($"Score:\t{aPlayer.myScore}");
+            }
             if (!aPlayer.myArcadeMode)
             {
                 Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 7);

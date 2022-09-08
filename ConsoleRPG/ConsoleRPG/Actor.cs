@@ -25,6 +25,8 @@ namespace ConsoleRPG
 
         public int myBattleID;
 
+        public int myXpPoints;
+
         public long myLastAttackTime;
 
         public bool myIsPlayer;
@@ -44,7 +46,7 @@ namespace ConsoleRPG
         public Vector2 myBattleNameOnScreenPosition;
 
 
-        public Actor(Actors aType, string aSpritePath, int someHP, int aDamage, int aCoolDown,bool aPlayerToggle = false)
+        public Actor(Actors aType, string aSpritePath, int someHP, int aDamage, int aCoolDown, int someXpPoints = 0, bool aPlayerToggle = false)
         {
             myType = aType;
             myHP = someHP;
@@ -53,6 +55,7 @@ namespace ConsoleRPG
             myIsPlayer = aPlayerToggle;
             myCoolDown = aCoolDown;
             myBattleID = 0;
+            myXpPoints = someXpPoints;
             myLastAttackTime = 0L;
             myIsAlive = true;
             mySprite = Utilities.ReadFromFile(aSpritePath, out myName);
@@ -72,6 +75,7 @@ namespace ConsoleRPG
             myIsPlayer = aCopy.myIsPlayer;
             myCoolDown = aCopy.myCoolDown;
             myBattleID = aCopy.myBattleID;
+            myXpPoints = aCopy.myXpPoints;
             myLastAttackTime = aCopy.myLastAttackTime;
             myIsAlive = aCopy.myIsAlive;
             mySprite = aCopy.mySprite;
@@ -92,6 +96,7 @@ namespace ConsoleRPG
             myIsPlayer = true;
             myCoolDown = aPlayer.myCoolDown;
             myBattleID = 0;
+            myXpPoints = 0;
             myLastAttackTime = 0L;
             myIsAlive = true;
             mySprite = aPlayer.myGameObject.MySprite;
@@ -109,6 +114,7 @@ namespace ConsoleRPG
             myMaxHP += someHP;
             myHP = myMaxHP;
             myDamage += someDamage;
+            myXpPoints = (int)((float)myXpPoints * 1.5f);
         }
 
         public void AddHitSprite(string aPath)

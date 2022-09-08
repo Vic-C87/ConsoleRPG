@@ -10,6 +10,11 @@ namespace ConsoleRPG
     {
         public HighScore()
         {
+            
+        }
+
+        public void ShowHighScore()
+        {
             Console.Clear();
             Console.WriteLine("HS");
             Console.ReadLine();

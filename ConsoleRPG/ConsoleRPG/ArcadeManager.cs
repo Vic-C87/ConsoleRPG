@@ -61,7 +61,7 @@ namespace ConsoleRPG
             SetVectors();
             
             myRoomFactory = new RoomFactory();
-            myRoomFactory.CreateArcadeRooms();
+            myRoomFactory.CreateArcadeRooms(10);
             myRoomsByID = myRoomFactory.GetArcadeRooms();
             DoorFactory doorFactory = new DoorFactory();
             doorFactory.CreateArcadeDoors();
@@ -85,6 +85,7 @@ namespace ConsoleRPG
             myPlayer.myCurrentRoom = 1;
 
             EnterRoom(DoorDirections.North);
+            DisplayPickUpText("Press \'TAB\' to check your stats", false);
 
             while (myArcadeModeIsRunning)
             {
@@ -198,7 +199,6 @@ namespace ConsoleRPG
             SetHasDoors();
             myPlayer.myGameObject.DrawSprite(GetSpawnPointFromDoorDirection(anEntryPoint));
             Utilities.CursorPosition();
-            Console.Write("Room: " + myPlayer.myCurrentRoom);//Debug
         }
 
         void ResetHasDoors()
@@ -261,11 +261,18 @@ namespace ConsoleRPG
             myTextFeedBackPosition = new Vector2(myDrawRoomOffSet.X + 4, myDrawRoomOffSet.Y - 4);
         }
 
-        void DisplayPickUpText(string anItemTitle)
+        void DisplayPickUpText(string anItemTitle, bool anIsanItem = true)
         {
             myPickUpText = true;
             Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 3);
-            Utilities.Color("You've picked up: " + anItemTitle, ConsoleColor.Blue);
+            if (anIsanItem)
+            {
+                Utilities.Color("You've picked up: " + anItemTitle, ConsoleColor.Blue);
+            }
+            else
+            {
+                Utilities.Color(anItemTitle, ConsoleColor.DarkGreen);
+            }
 
         }
 
@@ -275,7 +282,7 @@ namespace ConsoleRPG
             {
                 myPickUpText = false;
                 Utilities.CursorPosition(myDrawRoomOffSet.X + 52, myDrawRoomOffSet.Y - 3);
-                for (int i = 0; i < 34; i++)
+                for (int i = 0; i < 54; i++)
                 {
                     Console.Write(" ");
                 }
@@ -478,12 +485,19 @@ namespace ConsoleRPG
                 myRoomsByID[myPlayer.myCurrentRoom].myRoomCleared = true;
                 EnterRoom(myPlayerPositionBeforeBattle);
                 //Respawn level if last room in level(room 16)
-                if(myPlayer.myCurrentRoom == 16)
+                if ((myPlayer.myCurrentRoom == 15 || myPlayer.myCurrentRoom == 12) && myPlayer.myCurrentLevel == 1)
                 {
-                    myRoomsByID = myRoomFactory.RespawnRooms();
+                    myPlayer.FullHeal();
+                    DisplayPickUpText("You feel rejuvenated, your health and mana is restored", false);
+                }
+                if (myPlayer.myCurrentRoom == 16)
+                {
+                    int randomLootValue = Utilities.Clamp(10 - myPlayer.myCurrentLevel, 1, 10);
+                    myRoomsByID = myRoomFactory.RespawnRooms(randomLootValue);
                     myPlayer.myCurrentRoom = 1;
                     myPlayer.myCurrentLevel++;
                     myEnemyFactory.LevelUpEnemies();
+                    myPlayer.FullHeal();
                     EnterRoom(DoorDirections.North);
                 }
             }

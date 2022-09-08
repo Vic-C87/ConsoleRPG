@@ -9,23 +9,23 @@ namespace ConsoleRPG
 
         public EnemyFactory()
         {
-            Actor enemy = new Actor(Actors.Bat, @"Sprites/Bat.txt", 10, 3, 5000);
+            Actor enemy = new Actor(Actors.Bat, @"Sprites/Bat.txt", 10, 3, 5000, 10);
             enemy.AddHitSprite(@"Sprites/BatDown.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.Spider, @"Sprites/Spider.txt", 12, 5, 5000);
+            enemy = new Actor(Actors.Spider, @"Sprites/Spider.txt", 12, 5, 5000, 20);
             enemy.AddHitSprite(@"Sprites/SpiderHit.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.Dragon, @"Sprites/Dragon.txt", 15, 10, 7000);
+            enemy = new Actor(Actors.Dragon, @"Sprites/Dragon.txt", 15, 10, 7000, 30);
             enemy.AddHitSprite(@"Sprites/DragonHit.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.EliteDragon, @"Sprites/EliteDragon.txt", 20, 10, 7000);
+            enemy = new Actor(Actors.EliteDragon, @"Sprites/EliteDragon.txt", 20, 10, 7000, 50);
             enemy.AddHitSprite(@"Sprites/EliteDragonHit.txt");
             myEnemies.Add(enemy.myType, enemy);
 
-            enemy = new Actor(Actors.EvilLord, @"Sprites/Dracula.txt", 30, 20, 10000);
+            enemy = new Actor(Actors.EvilLord, @"Sprites/Dracula.txt", 30, 20, 10000, 100);
             //Add hit sprite
             myEnemies.Add(enemy.myType, enemy);
         }

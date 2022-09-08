@@ -23,6 +23,8 @@ namespace ConsoleRPG
 
         int myPlayerCoolDownCounter;
 
+        int myGainedXp;
+
         readonly Vector2[] myEnemySpritePositions = new Vector2[3] { new Vector2(60, 9), new Vector2(90, 9), new Vector2(120, 9) };
         readonly Vector2 myPlayerSpritePosition = new Vector2(103, 28);
 
@@ -81,7 +83,7 @@ namespace ConsoleRPG
             myEndBattleText.OffSet(myOffSet);
         }
         public void StartBattle(List<Actor> anEnemyList, Player aPlayerReference, GameManager theGameManager, char[,] aRoomSprite)
-        {            
+        {
             myPlayer = new Actor(aPlayerReference);
             myPlayerCoolDownCounter = myPlayer.myCoolDown/1000;
             myPlayerStillAlive = true;
@@ -126,6 +128,7 @@ namespace ConsoleRPG
 
         public void StartBattle(List<Actor> anEnemyList, Player aPlayerReference, ArcadeManager theArcadeManager, char[,] aRoomSprite)
         {
+            myGainedXp = 0;
             myPlayer = new Actor(aPlayerReference);
             myPlayerCoolDownCounter = myPlayer.myCoolDown / 1000;
             myPlayerStillAlive = true;
@@ -136,6 +139,7 @@ namespace ConsoleRPG
                 myEnemies.Add(anEnemyList[i]);
                 myEnemies[i].myBattleID = i + 1;
                 myTurnListByBattleID.Add(myEnemies[i].myBattleID);
+                myGainedXp += myEnemies[i].myXpPoints;
             }
             myStopWatch.Start();
             DrawBattleScene(aRoomSprite);
@@ -148,6 +152,7 @@ namespace ConsoleRPG
             Utilities.Cursor(myEndBattleText);
             if (myPlayerStillAlive)
             {
+                aPlayerReference.myScore += myGainedXp;
                 Console.Write("Victory!");
                 SoundManager.PlaySound(SoundType.BattleVictory);
             }

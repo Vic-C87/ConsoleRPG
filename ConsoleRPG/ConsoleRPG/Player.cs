@@ -16,6 +16,7 @@ namespace ConsoleRPG
         public bool myArcadeMode = false;
 
         public int myDeathCounter;
+        public int myScore;
 
         public Stat myStat;
 
@@ -32,7 +33,7 @@ namespace ConsoleRPG
             myGameObject = aGameObject;
             myCurrentRoom = 0;
             myCurrentLevel = 1;
-            myStat = new Stat(0, 500, 500, 3, 1);
+            myStat = new Stat(0, aBaseHP, 5, 3, 1);
             myBaseHP = myStat.myHP;
             myCurrentHP = myBaseHP;
             myMaxMP = myStat.myMP;
@@ -59,6 +60,12 @@ namespace ConsoleRPG
             myMaxMP += aStat.myMP;
             myBaseDamage += aStat.myDamage;
             myArmor += aStat.myArmor;
+        }
+
+        public void FullHeal()
+        {
+            myCurrentHP = myBaseHP;
+            myCurrentMP = myMaxMP;
         }
     }
 }

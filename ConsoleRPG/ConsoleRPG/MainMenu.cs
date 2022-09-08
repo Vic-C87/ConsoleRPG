@@ -19,6 +19,8 @@ namespace ConsoleRPG
         int myPreviousMenuIndex = 0;
         int myCurrentMenuIndex = 0;
 
+        HighScore myHighScore;
+
         public MainMenu()
         {
             myWindowWidth = Console.WindowWidth;
@@ -75,6 +77,7 @@ namespace ConsoleRPG
                 myMenuPositions[i] = new Vector2(myWindowWidth / 2 - myMenuChoices[i].Length / 2, myWindowHeight / 2 + i * 2);
             }
 
+            myHighScore = new HighScore();
         }
 
         void DrawMenu()
@@ -140,7 +143,7 @@ namespace ConsoleRPG
                     _ = new ArcadeManager();
                     break;
                 case EMainMenuChoices.HighScore:
-                    _ = new HighScore();//FIX!!! should be stored as variable and open instead myHighScore.ShowHighScore();
+                    myHighScore.ShowHighScore();
                     break;
                 case EMainMenuChoices.Quit:
                     Utilities.CursorPosition();

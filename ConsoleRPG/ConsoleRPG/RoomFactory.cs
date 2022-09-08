@@ -148,13 +148,13 @@ namespace ConsoleRPG
         {
 			myArcadeRoomMap = new Dictionary<int, Room>();
 
-			string rootRoomPath = @"Sprites/Rooms/";
+			string rootRoomPath = @"Sprites/Rooms/ArcadeRooms/";
 
 			Room newRoom = new Room("00", "a Room",
 					1, false,
 					new Dictionary<int, DoorDirections>() { { 1, DoorDirections.West }, { 2, DoorDirections.North } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt",//Sprite!!!
+					rootRoomPath + "W-N.txt",//Sprite!!!
 					true);
 			newRoom.AddItemToChest(UpgradeType.HealthUpgrade);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
@@ -163,7 +163,7 @@ namespace ConsoleRPG
 					2, false,
 					new Dictionary<int, DoorDirections>() { { 3, DoorDirections.West }, { 4, DoorDirections.North }, {1, DoorDirections.East } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-E.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -171,7 +171,7 @@ namespace ConsoleRPG
 					3, false,
 					new Dictionary<int, DoorDirections>() { { 5, DoorDirections.West }, { 6, DoorDirections.North }, { 3, DoorDirections.East } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-E.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -179,7 +179,7 @@ namespace ConsoleRPG
 					4, false,
 					new Dictionary<int, DoorDirections>() { { 7, DoorDirections.North }, { 5, DoorDirections.East } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "N-E.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -187,7 +187,7 @@ namespace ConsoleRPG
 					5, false,
 					new Dictionary<int, DoorDirections>() { { 8, DoorDirections.West }, { 9, DoorDirections.North }, { 2, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -195,7 +195,7 @@ namespace ConsoleRPG
 					6, false,
 					new Dictionary<int, DoorDirections>() { { 10, DoorDirections.West }, { 11, DoorDirections.North }, { 8, DoorDirections.East }, { 4, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -203,7 +203,7 @@ namespace ConsoleRPG
 					7, false,
 					new Dictionary<int, DoorDirections>() { { 12, DoorDirections.West }, { 13, DoorDirections.North }, { 10, DoorDirections.East }, { 6, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -211,7 +211,7 @@ namespace ConsoleRPG
 					8, false,
 					new Dictionary<int, DoorDirections>() { { 14, DoorDirections.North }, { 12, DoorDirections.East }, { 7, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "N-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -219,7 +219,7 @@ namespace ConsoleRPG
 					9, false,
 					new Dictionary<int, DoorDirections>() { { 15, DoorDirections.West }, { 16, DoorDirections.North }, { 9, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -227,7 +227,7 @@ namespace ConsoleRPG
 					10, false,
 					new Dictionary<int, DoorDirections>() { { 17, DoorDirections.West }, { 18, DoorDirections.North }, { 15, DoorDirections.East }, { 11, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -235,7 +235,7 @@ namespace ConsoleRPG
 					11, false,
 					new Dictionary<int, DoorDirections>() { { 19, DoorDirections.West }, { 20, DoorDirections.North }, { 17, DoorDirections.East }, { 13, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-N-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -243,7 +243,7 @@ namespace ConsoleRPG
 					12, false,
 					new Dictionary<int, DoorDirections>() { { 21, DoorDirections.North }, { 19, DoorDirections.East }, { 14, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "N-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -251,7 +251,7 @@ namespace ConsoleRPG
 					13, false,
 					new Dictionary<int, DoorDirections>() { { 22, DoorDirections.West }, { 16, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -259,7 +259,7 @@ namespace ConsoleRPG
 					14, false,
 					new Dictionary<int, DoorDirections>() { { 23, DoorDirections.West }, { 22, DoorDirections.East }, { 18, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -267,7 +267,7 @@ namespace ConsoleRPG
 					15, false,
 					new Dictionary<int, DoorDirections>() { { 24, DoorDirections.West }, { 23, DoorDirections.East }, { 20, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "W-E-S.txt");//Sprite!!!
 			newRoom.RandomLoot(aLootRandomValue);
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
@@ -275,7 +275,7 @@ namespace ConsoleRPG
 					16, false,
 					new Dictionary<int, DoorDirections>() { { 24, DoorDirections.East }, { 21, DoorDirections.South } },
 					new List<int>(),
-					rootRoomPath + "Foyer.txt");//Sprite!!!
+					rootRoomPath + "E-S.txt");//Sprite!!!
 			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
 
 			
