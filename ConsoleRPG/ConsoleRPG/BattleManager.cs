@@ -124,6 +124,50 @@ namespace ConsoleRPG
             theGameManager.EndBattle();
         }
 
+        public void StartBattle(List<Actor> anEnemyList, Player aPlayerReference, ArcadeManager theArcadeManager, char[,] aRoomSprite)
+        {
+            myPlayer = new Actor(aPlayerReference);
+            myPlayerCoolDownCounter = myPlayer.myCoolDown / 1000;
+            myPlayerStillAlive = true;
+            myEnemiesStillAlive = true;
+            myTurnListByBattleID.Add(myPlayer.myBattleID);
+            for (int i = 0; i < anEnemyList.Count; i++)
+            {
+                myEnemies.Add(anEnemyList[i]);
+                myEnemies[i].myBattleID = i + 1;
+                myTurnListByBattleID.Add(myEnemies[i].myBattleID);
+            }
+            myStopWatch.Start();
+            DrawBattleScene(aRoomSprite);
+            while (myPlayerStillAlive && myEnemiesStillAlive)
+            {
+                SetTurnList();
+                Act();
+                CheckAlive();
+            }
+            Utilities.Cursor(myEndBattleText);
+            if (myPlayerStillAlive)
+            {
+                Console.Write("Victory!");
+                SoundManager.PlaySound(SoundType.BattleVictory);
+            }
+            else
+            {
+                Console.Write("You Lose!");
+                Utilities.Cursor(myEndBattleText.Down());
+                Console.Write("You will respawn in the village.");
+                aPlayerReference.myDeathCounter++;
+                SoundManager.PlaySound(SoundType.BattleLost);
+            }
+            Utilities.Cursor(myEndBattleText.Down(2));
+            Utilities.PressEnterToContinue();
+            myStopWatch.Reset();
+            aPlayerReference.myCurrentHP = myPlayer.myHP;
+            aPlayerReference.myCurrentMP = myPlayer.myMP;
+            ResetBattleScene();
+            theArcadeManager.EndBattle();
+        }
+
         void DrawBattleScene(char[,] aRoomSprite)
         {
             Vector2 nameOnScreenTemp = myEnemyNameOnScreenPosition;

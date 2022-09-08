@@ -104,6 +104,13 @@ namespace ConsoleRPG
             myArmor = aPlayer.myStat.myArmor;
         }
 
+        public void StrenghtenEnemy(int someHP, int someDamage)
+        {
+            myMaxHP += someHP;
+            myHP = myMaxHP;
+            myDamage += someDamage;
+        }
+
         public void AddHitSprite(string aPath)
         {
             myHitSprite = Utilities.ReadFromFile(aPath, out _);

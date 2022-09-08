@@ -30,6 +30,14 @@ namespace ConsoleRPG
             myEnemies.Add(enemy.myType, enemy);
         }
 
+        public void LevelUpEnemies(int someHP = 10, int someDamage = 5)
+        {
+            foreach (Actor enemy in myEnemies.Values)
+            {
+                enemy.StrenghtenEnemy(someHP, someDamage);
+            }
+        }
+
         public Actor GetEnemy(Actors anEnemy)
         {
             Actor enemy = myEnemies.ContainsKey(anEnemy) ? new Actor(myEnemies[anEnemy]) : null;

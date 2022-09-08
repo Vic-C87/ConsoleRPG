@@ -5,6 +5,7 @@ namespace ConsoleRPG
     internal class RoomFactory
     {
 		readonly Dictionary<int, Room> myRooms;
+		Dictionary<int, Room> myArcadeRoomMap;
 
 		public RoomFactory()
 		{
@@ -142,6 +143,154 @@ namespace ConsoleRPG
 						   rootRoomPath + "MasterSuite.txt");//Loot
 			myRooms.Add(newRoom.myRoomID, newRoom);
 		}
+
+		public void CreateArcadeRooms(int aLootRandomValue = 5)
+        {
+			myArcadeRoomMap = new Dictionary<int, Room>();
+
+			string rootRoomPath = @"Sprites/Rooms/";
+
+			Room newRoom = new Room("00", "a Room",
+					1, false,
+					new Dictionary<int, DoorDirections>() { { 1, DoorDirections.West }, { 2, DoorDirections.North } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt",//Sprite!!!
+					true);
+			newRoom.AddItemToChest(UpgradeType.HealthUpgrade);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("01", "a Room",
+					2, false,
+					new Dictionary<int, DoorDirections>() { { 3, DoorDirections.West }, { 4, DoorDirections.North }, {1, DoorDirections.East } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("02", "a Room",
+					3, false,
+					new Dictionary<int, DoorDirections>() { { 5, DoorDirections.West }, { 6, DoorDirections.North }, { 3, DoorDirections.East } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("03", "a Room",
+					4, false,
+					new Dictionary<int, DoorDirections>() { { 7, DoorDirections.North }, { 5, DoorDirections.East } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("10", "a Room",
+					5, false,
+					new Dictionary<int, DoorDirections>() { { 8, DoorDirections.West }, { 9, DoorDirections.North }, { 2, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("11", "a Room",
+					6, false,
+					new Dictionary<int, DoorDirections>() { { 10, DoorDirections.West }, { 11, DoorDirections.North }, { 8, DoorDirections.East }, { 4, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("12", "a Room",
+					7, false,
+					new Dictionary<int, DoorDirections>() { { 12, DoorDirections.West }, { 13, DoorDirections.North }, { 10, DoorDirections.East }, { 6, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("13", "a Room",
+					8, false,
+					new Dictionary<int, DoorDirections>() { { 14, DoorDirections.North }, { 12, DoorDirections.East }, { 7, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("20", "a Room",
+					9, false,
+					new Dictionary<int, DoorDirections>() { { 15, DoorDirections.West }, { 16, DoorDirections.North }, { 9, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("21", "a Room",
+					10, false,
+					new Dictionary<int, DoorDirections>() { { 17, DoorDirections.West }, { 18, DoorDirections.North }, { 15, DoorDirections.East }, { 11, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("22", "a Room",
+					11, false,
+					new Dictionary<int, DoorDirections>() { { 19, DoorDirections.West }, { 20, DoorDirections.North }, { 17, DoorDirections.East }, { 13, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("23", "a Room",
+					12, false,
+					new Dictionary<int, DoorDirections>() { { 21, DoorDirections.North }, { 19, DoorDirections.East }, { 14, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("30", "a Room",
+					13, false,
+					new Dictionary<int, DoorDirections>() { { 22, DoorDirections.West }, { 16, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("31", "a Room",
+					14, false,
+					new Dictionary<int, DoorDirections>() { { 23, DoorDirections.West }, { 22, DoorDirections.East }, { 18, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("32", "a Room",
+					15, false,
+					new Dictionary<int, DoorDirections>() { { 24, DoorDirections.West }, { 23, DoorDirections.East }, { 20, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			newRoom.RandomLoot(aLootRandomValue);
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			newRoom = new Room("33", "a Room",
+					16, false,
+					new Dictionary<int, DoorDirections>() { { 24, DoorDirections.East }, { 21, DoorDirections.South } },
+					new List<int>(),
+					rootRoomPath + "Foyer.txt");//Sprite!!!
+			myArcadeRoomMap.Add(newRoom.myRoomID, newRoom);
+
+			
+		}
+
+		public Dictionary<int, Room> GetArcadeRooms()
+        {
+			return myArcadeRoomMap;
+        }
+
+		public Dictionary<int, Room> RespawnRooms(int aLootRandomValue = 5)
+        {
+			CreateArcadeRooms(aLootRandomValue);
+			return myArcadeRoomMap;
+        }
 
 		public Dictionary<int, Room> GetRooms()
 		{

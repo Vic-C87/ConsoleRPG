@@ -18,8 +18,16 @@ namespace ConsoleRPG
             Console.Clear();
             Utilities.CursorPosition(myStatsOffSet.X, 0);
             Console.Write("Move around with the arrow keys");
-            Utilities.CursorPosition(myStatsOffSet.X, 1);
-            Console.Write("Place portal back to Village with F1");
+            if (!aPlayer.myArcadeMode)
+            {
+                Utilities.CursorPosition(myStatsOffSet.X, 1);
+                Console.Write("Place portal back to Village with F1");
+            }
+            else
+            {
+                Utilities.CursorPosition(myStatsOffSet.X, 1);
+                Console.Write("Using \'Defend\' in battle heals you a small amount");
+            }
             Utilities.CursorPosition(myStatsOffSet.X, 2);
             Console.Write("Open Stats menu with TAB");
             Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y);
@@ -30,8 +38,18 @@ namespace ConsoleRPG
             Console.Write($"Damage:\t{aPlayer.myStat.myDamage}");
             Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 3);
             Console.Write($"Armor:\t{aPlayer.myStat.myArmor}");
-            Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 7);
-            Console.Write($"Death count:\t{aPlayer.myDeathCounter}");
+            if (!aPlayer.myArcadeMode)
+            {
+                Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 7);
+                Console.Write($"Death count:\t{aPlayer.myDeathCounter}");
+            }
+            else
+            {
+                Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 7);
+                Console.Write($"Current Room:\t{aPlayer.myCurrentRoom}");
+                Utilities.CursorPosition(myStatsOffSet.X, myStatsOffSet.Y + 8);
+                Console.Write($"Current Level:\t{aPlayer.myCurrentLevel}");
+            }
 
             if (aPlayer.myKeyIDs.Count > 0)
             {

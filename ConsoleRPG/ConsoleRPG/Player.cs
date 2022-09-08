@@ -5,6 +5,7 @@ namespace ConsoleRPG
     internal class Player
     {
         public int myCurrentRoom;
+        public int myCurrentLevel;
         public int myBaseHP;
         public int myCurrentHP;
         public int myMaxMP;
@@ -12,6 +13,7 @@ namespace ConsoleRPG
         public int myBaseDamage;
         public int myArmor;
         public int myCoolDown;
+        public bool myArcadeMode = false;
 
         public int myDeathCounter;
 
@@ -29,7 +31,8 @@ namespace ConsoleRPG
         {
             myGameObject = aGameObject;
             myCurrentRoom = 0;
-            myStat = new Stat(0, aBaseHP, 5, 3, 1);
+            myCurrentLevel = 1;
+            myStat = new Stat(0, 500, 500, 3, 1);
             myBaseHP = myStat.myHP;
             myCurrentHP = myBaseHP;
             myMaxMP = myStat.myMP;

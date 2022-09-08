@@ -12,7 +12,7 @@ namespace ConsoleRPG
         readonly int myWindowWidth;
         readonly int myWindowHeight;
 
-        bool myGameRunning = true;
+        bool myStoryModeRunning = true;
 
         bool myBattleMode = false;
 
@@ -36,6 +36,8 @@ namespace ConsoleRPG
 
         Player myPlayer;
         DisplayStats myDisplayStats;
+        PauseGameMenu myPauseMenu;
+        
         readonly TownPortal myPortal;
 
         Vector2 myDrawRoomOffSet = new Vector2();
@@ -50,7 +52,8 @@ namespace ConsoleRPG
         readonly GameManager myGameManager;
         readonly SpellFactory mySpellFactory;
         readonly ItemFactory myItemFactory;
-        readonly EnemyFactory myEnemyFactory;        
+        readonly EnemyFactory myEnemyFactory;
+        
 
         char[,] myDoorLockSprite;
         readonly char[,] myMansionSprite;
@@ -64,6 +67,7 @@ namespace ConsoleRPG
 
         public GameManager()
         {
+            Console.Clear();
             myWindowWidth = Console.WindowWidth;
             myWindowHeight = Console.WindowHeight;
             myDoorsByID = new Dictionary<int, Door>();
@@ -79,6 +83,7 @@ namespace ConsoleRPG
             myTavern = new Tavern();
             myFarmScene = new FarmScene();
             myHealer = new Healer();
+            myPauseMenu = new PauseGameMenu();
             myMansionSprite = Utilities.ReadFromFile(@"Sprites/Mansion.txt", out _);
             SoundManager.LoadSounds();
 
@@ -88,7 +93,7 @@ namespace ConsoleRPG
             EnterRoom(DoorDirections.North);
             Console.WriteLine("Move around with the arrow keys\nPlace portal back to Village with F1\nOpen Stats menu with TAB");
 
-            while(myGameRunning)
+            while(myStoryModeRunning)
             {
                 if (!myBattleMode && !myDisplayingStats)
                 {
@@ -537,8 +542,16 @@ namespace ConsoleRPG
 
             if (input.Key == ConsoleKey.Escape)
             {
-                Utilities.CursorPosition();
-                myGameRunning = false;
+                myDisplayingStats = true;
+                myPlayerPositionBeforeBattle = myPlayer.myGameObject.MyPosition;
+                myPauseMenu.PauseIt(out myStoryModeRunning);
+                if (myStoryModeRunning)
+                {
+                    EnterRoom(myPlayerPositionBeforeBattle);
+                    myDisplayingStats = false;
+                }
+                //Utilities.CursorPosition();
+                
             }
             else if (input.Key == ConsoleKey.UpArrow)
             {
@@ -587,10 +600,6 @@ namespace ConsoleRPG
                 myDisplayStats.ShowStats(myPlayer);
                 EnterRoom(myPlayerPositionBeforeBattle);
                 myDisplayingStats = false;
-            }
-            else if (input.Key == ConsoleKey.F2)//Debug
-            {
-                StartBattle();
             }
             else if (input.Key == ConsoleKey.Spacebar)
             {
@@ -777,7 +786,7 @@ namespace ConsoleRPG
             {
                 Utilities.Typewriter($"You've died {myPlayer.myDeathCounter} times in the mansion.", 50, ConsoleColor.DarkRed);
             }
-            myGameRunning = false;
+            myStoryModeRunning = false;
             Utilities.ActionByInput(() => Console.Clear(), ConsoleKey.Enter);
         }
     }

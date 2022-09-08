@@ -461,7 +461,6 @@ namespace ConsoleRPG
         ArmorUpgrade,
         HealthUpgrade,
         ManaUpgrade,
-        FireSpell,
         FullUpgrade
     }
 

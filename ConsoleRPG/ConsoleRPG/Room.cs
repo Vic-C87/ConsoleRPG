@@ -67,6 +67,17 @@ namespace ConsoleRPG
 			myChest.AddKey(aKeyID);
         }
 
+		public void RandomLoot(int aRandomizerValue)
+        {
+			aRandomizerValue = Utilities.Clamp(aRandomizerValue, 1, 10);
+			if (Utilities.GetRandom(10) <= aRandomizerValue)
+            {
+				myHaveChest = true;
+				myChest = new Chest();
+				AddItemToChest((UpgradeType)Utilities.GetRandom(5));
+            }
+        }
+
 		public void AddItemToChest(UpgradeType aType)
         {
 			myChest.AddItem(aType);
@@ -114,6 +125,26 @@ namespace ConsoleRPG
             {
 				difficulty = 3;
             }
+
+			return difficulty;
+        }
+
+		public int GetArcadeDifficultyLevel(int aLevelMultiplier = 1)
+        {
+			int difficulty;
+
+			if (myRoomID < 6)
+			{
+				difficulty = 1 * aLevelMultiplier;
+			}
+			else if (myRoomID > 5 && myRoomID < 11)
+			{
+				difficulty = 2 * aLevelMultiplier;
+			}
+			else
+			{
+				difficulty = 3 * aLevelMultiplier;
+			}
 
 			return difficulty;
         }

@@ -57,5 +57,14 @@ namespace ConsoleRPG
                 }
             }
         }
+
+        public static void StopPlaying()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                mySounds[SoundType.MansionAmbience].Play();
+                mySounds[SoundType.MansionAmbience].Stop();
+            }
+        }
     }
 }

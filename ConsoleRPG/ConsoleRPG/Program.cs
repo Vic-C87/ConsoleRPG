@@ -20,7 +20,7 @@ namespace ConsoleRPG
 
             Console.CursorVisible = false;
             Console.SetCursorPosition(0, 0);
-            _ = new GameManager();
+            _ = new MainMenu();
         }       
     }    
 }
