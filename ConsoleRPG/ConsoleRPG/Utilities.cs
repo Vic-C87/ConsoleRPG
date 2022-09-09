@@ -246,6 +246,37 @@ namespace ConsoleRPG
             return lines;
         }
 
+        static public Dictionary<int, string> GetHighScoreListFromFile(string aHighScorePath)
+        {
+            Dictionary<int, string> highScoreList = new Dictionary<int, string>();
+
+            string name = "";
+            int score = 0;
+
+            try
+            {
+                using StreamReader sr = new StreamReader(aHighScorePath);
+                while ((name = sr.ReadLine()) != null)
+                {
+                    _ = int.TryParse(sr.ReadLine(), out score);
+                    highScoreList.Add(score, name);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Could not read file");
+                Console.WriteLine(e.Message);
+            }
+
+            return highScoreList;
+        }
+
+        static public void SaveHighScore(Dictionary<int, string> someHighScores)
+        {
+
+        }
+
         static public Dialogue GetDialogue(string aDialoguePath)
         {
             string title = "";

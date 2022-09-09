@@ -140,7 +140,7 @@ namespace ConsoleRPG
                     _ = new GameManager();
                     break;
                 case EMainMenuChoices.ArcadeMode:
-                    _ = new ArcadeManager();
+                    _ = new ArcadeManager(myHighScore);
                     break;
                 case EMainMenuChoices.HighScore:
                     myHighScore.ShowHighScore();

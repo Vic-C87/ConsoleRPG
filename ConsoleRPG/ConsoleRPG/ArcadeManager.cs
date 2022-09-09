@@ -19,6 +19,9 @@ namespace ConsoleRPG
         bool myChestTrigger = false;
         bool myPickUpText = false;
         bool myMansionAmbiencePlaying = false;
+        bool myEnteredNewHighScore = false;
+
+        string myHighScoreName = "";
 
         Player myPlayer;
         PauseGameMenu myPauseMenu;
@@ -42,7 +45,7 @@ namespace ConsoleRPG
         Dictionary<int, Door> myDoorsByID;
         Dictionary<int, Room> myRoomsByID;
 
-        public ArcadeManager()
+        public ArcadeManager(HighScore aHighScoreReference)
         {
             Console.Clear();
             myWindowWidth = Console.WindowWidth;
@@ -94,6 +97,12 @@ namespace ConsoleRPG
                     GetInput(myPlayer.myGameObject);
                     CheckTrigger(myPlayer.myGameObject);
                 }
+            }
+
+            if (myEnteredNewHighScore)
+            {
+                aHighScoreReference.NewHighScore(myHighScoreName, myPlayer.myScore);
+                aHighScoreReference.ShowHighScore();
             }
 
         }
@@ -484,12 +493,12 @@ namespace ConsoleRPG
             {
                 myRoomsByID[myPlayer.myCurrentRoom].myRoomCleared = true;
                 EnterRoom(myPlayerPositionBeforeBattle);
-                //Respawn level if last room in level(room 16)
-                if ((myPlayer.myCurrentRoom == 15 || myPlayer.myCurrentRoom == 12) && myPlayer.myCurrentLevel == 1)
+                if ((myPlayer.myCurrentRoom == 15 || myPlayer.myCurrentRoom == 12) && myPlayer.myCurrentLevel < 3)
                 {
                     myPlayer.FullHeal();
                     DisplayPickUpText("You feel rejuvenated, your health and mana is restored", false);
                 }
+                //Respawn level if last room in level(room 16)
                 if (myPlayer.myCurrentRoom == 16)
                 {
                     int randomLootValue = Utilities.Clamp(10 - myPlayer.myCurrentLevel, 1, 10);
@@ -503,11 +512,9 @@ namespace ConsoleRPG
             }
             else
             {
-                //Enter name for highscore
-                myPlayer.myCurrentRoom = 1;
-                myPlayer.myCurrentHP = myPlayer.myBaseHP;
-                myPlayer.myCurrentMP = myPlayer.myMaxMP;
-                EnterRoom(DoorDirections.North);
+                //Show loose screen and enter name for highscore
+                myEnteredNewHighScore = true;
+                myArcadeModeIsRunning = false;
             }
         }
     }

@@ -159,9 +159,12 @@ namespace ConsoleRPG
             else
             {
                 Console.Write("You Lose!");
-                Utilities.Cursor(myEndBattleText.Down());
-                Console.Write("You will respawn in the village.");
-                aPlayerReference.myDeathCounter++;
+                if (!aPlayerReference.myArcadeMode)
+                {
+                    Utilities.Cursor(myEndBattleText.Down());
+                    Console.Write("You will respawn in the village.");
+                    aPlayerReference.myDeathCounter++;
+                }
                 SoundManager.PlaySound(SoundType.BattleLost);
             }
             Utilities.Cursor(myEndBattleText.Down(2));
