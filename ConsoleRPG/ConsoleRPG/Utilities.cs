@@ -272,9 +272,52 @@ namespace ConsoleRPG
             return highScoreList;
         }
 
-        static public void SaveHighScore(Dictionary<int, string> someHighScores)
+        static public void SaveHighScore(Dictionary<int, string> someHighScores, string aHighScorePath)
         {
+            if (File.Exists(aHighScorePath))
+            {
+                try
+                {
+                    File.Delete(aHighScorePath);
+                }
+                catch (IOException exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
+            }
+            int count = someHighScores.Count * 2;
+            string[] scores = new string[count];
+            count = 0;
+            foreach (KeyValuePair<int, string> score in someHighScores)
+            {
+                scores[count] = score.Value;
+                count++;
+                scores[count] = score.Key.ToString();
+                count++;
+            }
 
+            using (StreamWriter sw = new StreamWriter(aHighScorePath))
+            {
+                foreach (string line in scores)
+                {
+                    sw.WriteLine(line);
+                }
+            }
+
+
+        }
+
+        static public string EnterName(Vector2 aScreenPosition)
+        {
+            Cursor(aScreenPosition);
+            Console.Write("Please enter your name:");
+            Cursor(aScreenPosition.Down());
+            string name = Console.ReadLine();
+            if (name.Length > 20)
+            {
+                name = name.Remove(20);
+            }
+            return name;
         }
 
         static public Dialogue GetDialogue(string aDialoguePath)

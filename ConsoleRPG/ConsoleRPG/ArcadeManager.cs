@@ -512,7 +512,9 @@ namespace ConsoleRPG
             }
             else
             {
-                //Show loose screen and enter name for highscore
+                Console.Clear();
+                //Loosing sprite
+                myHighScoreName = Utilities.EnterName(new Vector2(myWindowWidth/3, myWindowHeight/3));
                 myEnteredNewHighScore = true;
                 myArcadeModeIsRunning = false;
             }

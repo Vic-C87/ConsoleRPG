@@ -9,9 +9,10 @@ namespace ConsoleRPG
     internal class HighScore
     {
         Dictionary<int, string> myScores = new Dictionary<int, string>();
+        string highScorePath;
         public HighScore()
         {
-            string highScorePath = @"HighScore/HighScores.txt";
+            highScorePath = @"HighScore/HighScores.txt";
             myScores = Utilities.GetHighScoreListFromFile(highScorePath);
         }
 
@@ -20,7 +21,7 @@ namespace ConsoleRPG
             SortHighScore();
             Console.Clear();
             int xName = Console.WindowWidth / 3;
-            int xScore = xName + 20;
+            int xScore = xName + 25;
             int y = Console.WindowHeight / 4;
             Utilities.CursorPosition(Console.WindowWidth/2, Console.WindowHeight/4);
             foreach (KeyValuePair<int, string> highscore in myScores)
@@ -56,7 +57,7 @@ namespace ConsoleRPG
 
         public void WriteHighScoreToFile()
         {
-            Utilities.SaveHighScore(myScores);
+            Utilities.SaveHighScore(myScores, highScorePath);
         }
     }
 }
