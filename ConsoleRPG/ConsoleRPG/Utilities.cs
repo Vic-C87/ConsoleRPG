@@ -391,6 +391,12 @@ namespace ConsoleRPG
             Console.ReadLine();
         }
 
+        public static void PressEnterToContinue(string aMessage, Vector2 aTextPosition = new Vector2())
+        {
+            Console.Write(aMessage);
+            Console.ReadLine();
+        }
+
         public static void Color(string atext, ConsoleColor aColor)
         {
             Console.ForegroundColor = aColor;

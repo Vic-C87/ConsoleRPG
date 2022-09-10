@@ -17,5 +17,10 @@ namespace ConsoleRPG
             myDamage = someDamage;
             myManaCost = aManaCost;
         }
+
+        public void Streghten(int anAmount = 5)
+        {
+            myDamage += anAmount;
+        }
     }
 }

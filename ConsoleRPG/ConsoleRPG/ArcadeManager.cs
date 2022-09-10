@@ -27,6 +27,7 @@ namespace ConsoleRPG
         PauseGameMenu myPauseMenu;
         DisplayStats myDisplayStats;
         RoomFactory myRoomFactory;
+        NextLevel myLevelTransitions;
 
         readonly ArcadeManager myArcadeManager;
         readonly BattleManager myBattleManager;
@@ -59,6 +60,7 @@ namespace ConsoleRPG
             myItemFactory = new ItemFactory();
             myEnemyFactory = new EnemyFactory();
             myPauseMenu = new PauseGameMenu();
+            myLevelTransitions = new NextLevel();
             myArcadeManager = this;
             SoundManager.LoadSounds();
             SetVectors();
@@ -86,7 +88,8 @@ namespace ConsoleRPG
             myDoorTriggerActivated.Add(DoorDirections.South, false);
 
             myPlayer.myCurrentRoom = 1;
-
+            SoundManager.PlaySound(SoundType.VillageAmbience);
+            myLevelTransitions.EnterMansion();
             EnterRoom(DoorDirections.North);
             DisplayPickUpText("Press \'TAB\' to check your stats", false);
 
@@ -461,6 +464,7 @@ namespace ConsoleRPG
                 else if (item.myItemID == 12)
                 {
                     myPlayer.myCurrentMP = myPlayer.myMaxMP;
+                    myPlayer.mySpellbook.LevelUpSpells(2);
                 }
                 else if (item.myItemID == 15)
                 {
@@ -506,7 +510,13 @@ namespace ConsoleRPG
                     myPlayer.myCurrentRoom = 1;
                     myPlayer.myCurrentLevel++;
                     myEnemyFactory.LevelUpEnemies();
-                    myPlayer.FullHeal();
+                    if (myPlayer.myCurrentLevel < 4)
+                    {
+                        myPlayer.FullHeal();
+                    }
+                    Console.Clear();
+                    myLevelTransitions.WalkStairs(myPlayer.myCurrentLevel);
+
                     EnterRoom(DoorDirections.North);
                 }
             }

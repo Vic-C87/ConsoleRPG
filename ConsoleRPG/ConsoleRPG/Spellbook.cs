@@ -60,5 +60,13 @@ namespace ConsoleRPG
         {
             return mySpells.Count;
         }
+
+        public void LevelUpSpells(int anAmount)
+        {
+            foreach(Spell spell in mySpells)
+            {
+                spell.Streghten(anAmount);
+            }
+        }
     }
 }
